@@ -1,0 +1,37 @@
+2.10 Functions from Lists
+
+2.10 Функции из списков
+
+
+In some earlier dialects of Lisp, functions were represented as
+lists. This gave Lisp programs the remarkable ability to write and
+execute their own Lisp programs. In Common Lisp, functions are no
+longer made of lists—good implementations compile them into native
+machine code. But you can still write programs that write programs,
+because lists are the input to the compiler.
+
+
+В некоторых ранних диалектах лиспов функции были представлены как
+списки. Это давало лиспу выдающуюся способность писать и выполнять
+свои собственные программы на лисп. В Common Lisp функции более не
+списки, хорошие реализации сразу компилируют их в машинный код. Но вы
+все еще можете писать программы, которые пишут программы, потому что
+списки можно отдать компилятору.
+
+
+It cannot be overemphasized how important it is that Lisp programs can
+write Lisp programs, especially since this fact is so often
+overlooked. Even experienced Lisp users rarely realize the advantages
+they derive from this feature of the language. This is why Lisp macros
+are so powerful, for example. Most of the techniques described in this
+book depend on the ability to write programs which manipulate Lisp
+expressions.
+
+
+Нелья переоценить насколько важен факт того, что программы на лиспе
+могут писать программы на лиспе, особенно учитывая то как часто эту
+возможность недооценивают. Даже опытные программисты редко осознают
+какой выигрыш они получают от этой возможности языка. Это причина
+того, почему макросы лиспа настолько могущественны
+например. Большинство техник в этой книге зависят от возможности
+писать программы, манипулирующие лисп выражениями.

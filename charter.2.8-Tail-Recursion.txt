@@ -1,0 +1,161 @@
+2.8 Tail-Recursion
+
+2.8 Хвостовая рекурсия
+
+
+A recursive function is one that calls itself. Such a call is
+tail-recursive if no work remains to be done in the calling function
+afterwards. This function is not tail-recursive
+
+
+Рекурсивными называют функции вызывающие сами себя. Хвостовой
+рекурсией называется рекурсия, если в вызывающей не остается никакой
+работы по сле вызова себя рекурсивно. Следующая функция не является
+функцией с хвостовой рекурсией
+
+
+(defun our-length (lst)
+  (if (null lst)
+      0
+      (1+ (our-length (cdr lst)))))
+
+
+because on returning from the recursive call we have to pass the
+result to 1+. The following function is tail-recursive, though
+
+
+потому что вернувшись из рекурсивыного вызова мы должны пережать
+результат в 1 +. Следующая функция является функцией с хвостовой
+рекурсией
+
+
+(defun our-find-if (fn lst)
+  (if (funcall fn (car lst))
+      (car lst)
+      (our-find-if fn (cdr lst))))
+
+
+because the value of the recursive call is immediately returned.
+
+потому что значение рекурсивного вызова сразу же возвращается.
+
+
+Tail-recursion is desirable because many Common Lisp compilers can
+transform tail-recursive functions into loops. With such a compiler,
+you can have the elegance of recursion in your source code without the
+overhead of function calls at runtime. The gain in speed is usually
+great enough that programmers go out of their way to make functions
+tail-recursive.
+
+Хвостовая рекурсия более эффективна, потому что многие реализации
+Common Lisp могут трасформировать хвостовую рекурсию в цикл. С такими
+компиляторами вы можете получить элегантность рекурсии в исходном коде
+без оверхеда на вызов функций. Прирост скорости обычно настолько
+высок, что программисты делают многое чтобы сделать функцию с
+хвостовой рекурсией.
+
+
+A function which isn’t tail-recursive can often be transformed into
+one that is by embedding in it a local function which uses an
+accumulator. In this context, an accumulator is a parameter
+representing the value computed so far. For example, our-length could
+be transformed into
+
+Функция, не обладающая свойством хвостовой рекурсии, часто может быть
+трансформированна в таковую, при помощи включения в нее локальной
+функции, использующей аккумулятор. В нашем контексте аккумулятор - это
+параметр, представляющий значение, которое нужно вычислить в процессе
+еркурсии. Например наша функция our-length может быть трансформирована
+в
+
+
+(defun our-length (lst)
+  (labels ((rec (lst acc) (if (null lst)
+                              acc
+                              (rec (cdr lst) (1+ acc)))))
+     (rec lst 0)))
+
+
+where the number of list elements seen so far is contained in a second
+parameter, acc. When the recursion reaches the end of the list, the
+value of acc will be the total length, which can just be returned. By
+accumulating the value as we go down the calling tree instead of
+constructing it on the way back up, we can make rec tail-recursive.
+
+
+где колличество элементов списка, которые будут пройдены содержится во
+втором параметре acc. Когда рекурсивная функция достигнет конца
+списка, значение acc будет его длиной, которое сразу может быть
+возвращено. Аккумулируя значения при спуске по дереву вызовов вместо
+того чтобы конструировать его поднимаясь мы можем сделать rec функцией
+с хвостовой рекурсией.
+
+
+Many Common Lisp compilers can do tail-recursion optimization, but not
+all of them do it by default. So after writing your functions to be
+tail-recursive, you may also want to put
+
+
+Многие компиляторы Common Lisp делают оптимизацию хвостовой рекурсии,
+но не все делают это по умолчанию. Так что после написания функции с
+хвостовой рекурсией непомешает так же добавить
+
+
+(proclaim '(optimize speed))
+
+
+(proclaim '(optimize speed))
+
+
+at the top of the ﬁle, to ensure that the compiler can take advantage
+of your efforts. 2)
+
+
+в начале файла, чтобы компилятор смог извлечь пользу из ваших
+стараний. 2)
+
+
+2) The declaration (optimize speed) ought to be an abbreviation for
+(optimize (speed 3)). However, one Common Lisp implementation does
+tail-recursion optimization with the former, but not the latter.
+
+
+2) Декларация (optimize speed) является аббревиатурой для (optimize
+(speed 3)). Тем не менее некоторые компиляторы Common Lisp делают
+оптимизацию хвостовой рекурсии при первом варианте но не втором.
+
+
+Given tail-recursion and type declarations, existing Common Lisp
+compilers can generate code that runs as fast as, or faster than,
+C. Richard Gabriel gives as ◦ an example the following function, which
+returns the sum of the integers from 1 to n:
+
+
+Используя хвостовую рекурсию и декларацию типов существующие
+реализации компиляторов Common Lisp могут генерировать код такой же
+бытрый, или даже быстрее кода на C. Ричард Гэбриэл приводит пример
+следующей функции, которая возвращает сумму целых чисел от 1 до n:
+
+
+
+(defun triangle (n)
+(labels ((tri (c n)
+           (declare (type fixnum n c))
+           (if (zerop n)
+               c
+               (tri (the fixnum (+ n c)) (the fixnum (-n 1))))))
+   (tri 0 n)))
+
+
+
+This is what fast Common Lisp code looks like. At ﬁrst it may not seem
+natural to write functions this way. It’s often a good idea to begin
+by writing a function in whatever way seems most natural, and then, if
+necessary, transforming it into a tail-recursive equivalent.
+
+
+Это пример того, как выглядит быстрый код на Common Lisp. С первого
+взгляда не кажется естественным писать код в таком виде. Хорошей идеей
+будет написать функцию в том виде, в котором она выражается на лиспе
+наиболее естественно, и затем, если возникнет необходимость,
+трансформировать ее в вариант с хвостовой рекурсией.

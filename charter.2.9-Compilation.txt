@@ -1,0 +1,268 @@
+2.9 Compilation
+
+2.9 Компиляция
+
+
+Lisp functions can be compiled either individually or by the ﬁle. If
+you just type a defun expression into the toplevel,
+
+Функции в лиспе могут быть скомпилированы либо индивидуально, либо в
+составе файла. Если вы просто напечатаете выражение defun в toplevel
+
+> (defun foo (x) (1+ x)) FOO
+
+
+many implementations will create an interpreted function. You can
+check whether a given function is compiled by feeding it to
+compiled-function-p:
+
+
+то многие реализации создадут интерпретируемую функцию. Вы можете
+проверить, является ли данная функция скомпилированной скормив ее
+compiled-function-p:
+
+
+> (compiled-function-p #'foo) NIL
+
+
+We can have foo compiled by giving its name to compile
+
+
+Мы можем получить скомпилированную версию, передав ее имя функции
+compile
+
+
+> (compile 'foo) FOO
+
+
+which will compile the deﬁnition of foo and replace the interpreted
+version with a compiled one.
+
+которая скомпилирует определение функции foo и заменит
+интерпретируемую версию на скомпилированную.
+
+
+> (compiled-function-p #'foo) T
+
+
+Compiled and interpreted functions are both Lisp objects, and behave
+the same, except with respect to compiled-function-p. Literal
+functions can also be compiled: compile expects its ﬁrst argument to
+be a name, but if you give nil as the ﬁrst argument, it will compile
+the lambda-expression given as the second argument.
+
+Скомпилированная и интерпретируемая версии являются объектами в лиспе
+и ведут себя одинаково за исключением функции
+compiled-function-p. Лямбда функции так же могут быть скомпилированы:
+compile ожидает в качестве первого аргумента имя функции, но если
+передать nil, то она скомпилирует лямбда выражение, переданое вторым
+аргументом.
+
+
+— FIXME: literal functions - wtf? lambda expression? — cvb
+
+
+> (compile nil '(lambda (x) (+ x 2))) #<Compiled-Function BF55BE>
+
+
+
+If you give both the name and function arguments, compile becomes a
+sort of compiling defun:
+
+Если передать и имя и лямбда выражение, то compile будет работать как
+компилирующий defun:
+
+
+— FIXME: function arguments? — cvb
+
+> (progn (compile 'bar '(lambda (x) (* x 3)))
+
+
+(compiled-function-p #'bar)) T
+
+
+Having compile in the language means that a program could build and
+compile new functions on the ﬂy. However, calling compile explicitly
+is a drastic measure, comparable to calling eval, and should be viewed
+with the same suspicion. 3) When Section 2.1 said that creating new
+functions at runtime was a routinely used programming technique, it
+referred to new closures like those made by make-adder, not functions
+made by calling compile on raw lists. Calling compile is not a
+routinely used programming technique—it's an extremely rare one. So
+beware of doing it unnecessarily. Unless you're implementing another
+language on top of Lisp (and much of the time, even then), what you
+need to do may be possible with macros.
+
+
+Наличие compile в языке означает, что программа может строить и
+компилировать новые функции на лету. Тем не менее вызов compile в
+явном виде является очень сильным средством, сравнимым с eval и должно
+применяться с такой же осторожностью. 3) Когда в секции 2.1
+говорилось, что создание новых функций в рантайме является привычной
+техникой - имелось ввиду создание новых замыканий, вроде тех, которые
+создавались при помощи make-adder, но не функции созданные при помощи
+вызова compile на сыром списке. Вызов compile - не обычная техника,
+это крайне редкий случай. Так что избегайте применения ее без
+необходимости. И все же если вы реализуете другой язык над лиспом (и
+даже в таком случае) то что вам нужно может быть возможно при помощи
+макросов.
+
+
+3) An explanation of why it is bad to call eval explicitly appears on
+page 278.
+
+Объяснение, почему плохо вызывать eval в явном виде есть на 278
+странице.
+
+
+There are two sorts of functions which you can't give as an argument
+to compile. According to CLTL2 (p. 677), you can't compile a function
+“deﬁned interpretively in a non-null lexical environment.” That is, if
+at the toplevel you deﬁne foo within a let
+
+
+Существует два вида функций, которые вы не можете передать compile в
+качестве аргумента. Согласно CLTL2 (стр. 677), вы не можете
+скомпилировать функцию "объявленную интерпретируемо в ненулевом
+лексическом окружении". Тоесть если в toplevel определить foo внутри
+let
+
+
+> (let ((y 2))
+    (defun foo (x) (+ x y)))
+
+
+then (compile 'foo) will not necessarily work.4) You also can't call
+compile on a function which is already compiled. In this situation,
+CLTL2 hints darkly that “the consequences...are unspeciﬁed.”
+
+
+то (compile 'foo) необязательно сработает. 4) Вы так же несможете
+скомпилировать функцию, которая уже была скомпилирована. В этой
+ситуации CLTL2 отвечает туманно "результат... не определен."
+
+
+4) It's ok to have this code in a ﬁle and then compile the ﬁle. The
+restriction is imposed on interpreted code for implementation reasons,
+not because there's anything wrong with deﬁning functions in distinct
+lexical environments.
+
+
+Не страшно держать такой код в файле и затем компилировать
+его. Ограничение распространяется на интерпретируемый код по причине
+реализации, но не из-за того, что что-то не так с определением функций
+в различных окружениях.
+
+
+The usual way to compile Lisp code is not to compile functions
+individually with compile, but to compile whole ﬁles with
+compile-file. This function takes a ﬁlename and creates a compiled
+version of the source ﬁle—typically with the same base name but a
+different extension. When the compiled ﬁle is loaded,
+compiled-function-p should return true for all the functions deﬁned in
+the ﬁle.
+
+
+Привычный способ копмилирования лисп кода - не компиляция отдельных
+функций, а компиляция всего файла при помощи compile-file. Это функция
+берет имя файла и создает скомпилированную версию исходного файла -
+как правило с таким же именем и другим расширением. Когда
+скомпилированный файл загруже, compile-function-p должен вернуть true
+для всех функций в нем.
+
+
+Later chapters will depend on another effect of compilation: when one
+function occurs within another function, and the containing function
+is compiled, the inner function will also get compiled. CLTL2 does not
+seem to say explicitly that this will happen, but in a decent
+implementation you can count on it.
+
+
+В следующих главах будем опираться на еще один эффект компиляции:
+когда одна функция встречается внутри другой, и внешняя функция
+компилируется, то внутренняя функция так же будет
+скомпилирована. CLTL2 явно не оговаривает этот момент, но вы можете
+расчитывать на него в основных реализациях.
+
+
+The compiling of inner functions becomes evident in functions which
+return functions. When make-adder (page 18) is compiled, it will
+return compiled functions:
+
+
+Компиляция внутренней функции становится явной в функциях, которые
+возвращают функции. Когда make-adder (стр. 18) будет скомпилирована,
+она вернет скомпилированную фунуцию:
+
+
+> (compile 'make-adder) MAKE-ADDER > (compiled-function-p (make-adder
+  2)) T
+
+
+As later chapters will show, this fact is of great importance in the
+implementation of embedded languages. If a new language is implemented
+by transformation, and the transformation code is compiled, then it
+yields compiled output—and so becomes in effect a compiler for the new
+language. (A simple example is described on page 81.)
+
+
+В следующих главах будет показано, что этот факт играет важнейшую роль
+в разработке встроенного языка. Если новый язык реализован как
+трансформация и трансформирующий код скомпилирован, то будет получен
+скомпилированный результат - и таким образом получаем эффективный
+компилятор для нового языка. (Простой пример описан на странице 81.)
+
+
+
+If we have a particularly small function, we may want to request that
+it be compiled inline. Otherwise, the machinery of calling it could
+entail more effort than the function itself. If we deﬁne a function:
+
+Если у нас есть очень маленькая функция, мы можем попросить компилятор
+сделать ее встроенной. Иначе издержки на вызов функции могут быть
+больше, чем ее полезная работа. Если мы определим функцию:
+
+(defun 50th (lst) (nth 49 lst))
+
+
+and make the declaration:
+
+и добавим декларацию:
+
+
+(proclaim '(inline 50th))
+
+
+then a reference to 50th within a compiled function should no longer
+require a real function call. If we deﬁne and compile a function which
+calls 50th,
+
+то ссылка на функцию 50th внутри скомпилированной функции больше не
+должно требовать реального вызова функции. Если мы определим и
+скомпилируем функцию, которая вызывает 50th,
+
+
+(defun foo (lst) (+ (50th lst) 1))
+
+
+then when foo is compiled, the code for 50th should be compiled right
+into it, just as if we had written
+
+
+то когда foo будет скомпилирована, код 50th будет вкомпилирован
+непосредственно в нее, как быдто мы написали
+
+
+(defun foo (lst) (+ (nth 49 lst) 1))
+
+
+in the ﬁrst place. The drawback is that if we redeﬁne 50th, we also
+have to recompile foo, or it will still reﬂect the old deﬁnition. The
+restrictions on inline functions are basically the same as those on
+macros (see Section 7.9).
+
+
+в первом случае. Недостаток в том, что если мы переопределим 50th то
+придется перекомпилировать foo, или она все еще будет работать со
+старым определением. Ограничени на встраиваемые функции то же что и на
+макросы (см Глава 7.9).
