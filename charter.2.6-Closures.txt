@@ -1,0 +1,355 @@
+2.6 Closures
+
+Замыкания
+
+
+Because Common Lisp is lexically scoped, when we deﬁne a function
+containing free variables, the system must save copies of the bindings
+of those variables at the time the function was deﬁned. Such a
+combination of a function and a set of variable bindings is called a
+closure. Closures turn out to be useful in a wide variety of
+applications.
+
+Поскольку Common Lisp является языком с лексическим связыванием, когда
+мы определяем функцию, содержащую свободные переменные, система должна
+сохранить копии привязок к этим переменным, в то время когда функция
+определяется. Такое сочетание функции и набора привязок переменных
+называется замыканием. Замыкания оказываются полезными в широком
+спектре приложений.
+
+
+Closures are so pervasive in Common Lisp programs that it’s possible
+to use them without even knowing it. Every time you give mapcar a
+sharp-quoted lambda-expression containing free variables, you’re using
+closures. For example, suppose we want to write a function which takes
+a list of numbers and adds a certain amount to each one. The function
+list+
+
+Замыкания настолько распространены в обычных программах на Lisp, что
+можно использовать их даже не подозревая об этом. Каждый раз, когда вы
+отдаёте mapcar лямбда-выражение с диез-кавычкой, вы используете
+замыкания. Например, предположим, что мы хотим написать функцию,
+которая принимает список номеров и добавляет определённую сумму к
+каждому. Функция list+
+
+
+Comment was deleted
+
+(defun list+ (lst n) (mapcar #’(lambda (x) (+ x n)) lst))
+
+(defun list+ (lst n) (mapcar #’(lambda (x) (+ x n)) lst))
+
+
+will do what we want:
+
+будет делать то, что мы хотим:
+
+
+> (list+ ’(1 2 3) 10) (11 12 13)
+
+> (list+ ’(1 2 3) 10) (11 12 13)
+
+
+If we look closely at the function which is passed to mapcar within
+list+, it’s actually a closure. The instance of n is free, and its
+binding comes from the surrounding environment. Under lexical scope,
+every such use of a mapping function causes the creation of a
+closure. 1)
+
+Если мы посмотрим внимательно на функцию, передаваемую в mapcar внутри
+list+, то поймём, что это замыкание. Экземпляр n является свободным и
+будет связан со значением из внешнего окружения. С лексическим
+связыванием, каждое использование присваивающей функции приводит к
+появлению замыкания.
+
+
+— [FIXME] — Hexs
+
+— Немного поправил, вообще если кто знает как вменяемо перевести
+binding - поправьте, я простого аналога в русском не нашел и еще тут
+надо перевести mapping function, тут переведено не верно, имеется
+ввиду функция, которая берет в качестве аргумента и отображает некую
+лямбду на список. — cvb
+
+1) Under dynamic scope the same idiom will work for a different
+reason—so long as neither of mapcar’s parameter is called x.
+
+С динамическим связыванием та же идиома будет работать по другой
+причине и до тех пор, пока ни один из параметров mapcar не назван x.
+
+
+Closures play a more conspicuous role in a style of programming
+promoted by Abelson and Sussman’s classic Structure and Interpretation
+of Computer Programs. Closures are functions with local state. The
+simplest way to use this state is in a situation like the following:
+
+Замыкания играют важную роль в стиле программирования, предлагаемом в
+книге Абельсона и Сассмана структура и интерпретация компьютерных
+программ (SICP). Замыкания - это функции с локальным
+состоянием. Простейший способ применения показан ниже:
+
+(let ((counter 0))
+      (defun new-id ()
+      (incf counter))
+   (defun reset-id ()
+     (setq counter 0)))
+
+(let ((counter 0))
+      (defun new-id ()
+      (incf counter))
+   (defun reset-id ()
+     (setq counter 0)))
+
+These two functions share a variable which serves as a counter. The
+ﬁrst one returns successive values of the counter, and the second
+resets the counter to 0. The same thing could be done by making the
+counter a global variable, but this way it is protected from
+unintended references.
+
+Эти две функции делят переменную, являющуюся счетчиком. Первая
+возвращает следующее значение, вторая обнуляет счетчик. Аналогичный
+результат можно получить сделав счетчик глобальной переменной, но
+применение замыканий защищает от случайных ссылок.
+
+
+It’s also useful to be able to return functions with local state. For
+example, the function make-adder
+
+Замыкания также удобно использовать для создания функций с локальным
+состоянием. Например функция make-adder
+
+(defun make-adder (n) #’(lambda (x) (+ x n)))
+
+(defun make-adder (n) #’(lambda (x) (+ x n)))
+
+
+takes a number, and returns a closure which, when called, adds that
+number to its argument. We can make as many instances of adders as we
+want:
+
+в качестве аргумента принимает число и возвращает замыкание, которое,
+если его вызвать, складывает это число со своим аргументом. Мы может
+создать столько таких замыканий, сколько нам нужно:
+
+
+> (setq add2 (make-adder 2)
+
+> (setq add2 (make-adder 2)
+        add10 (make-adder 10))
+#<Interpreted-Function BF162E> > (funcall add2 5) 7 > (funcall add10 3) 13
+
+
+> (setq add2 (make-adder 2)
+
+> (setq add2 (make-adder 2)
+        add10 (make-adder 10))
+#<Interpreted-Function BF162E> > (funcall add2 5) 7 > (funcall add10 3) 13
+
+
+
+In the closures returned by make-adder, the internal state is ﬁxed,
+but it’s also possible to make closures which can be asked to change
+their state.
+
+В замыкании возвращаемом функцией make-adder внутреннее состояние
+фиксированно, но можно сделать замыкание, которое можно попросить
+менять свое состояние.
+
+
+(defun make-adderb (n) #’(lambda (x &optional change)
+                           (if change (setq n x) (+ x n))))
+
+(defun make-adderb (n) #’(lambda (x &optional change)
+                           (if change (setq n x) (+ x n))))
+
+
+This new version of make-adder returns closures which, when called
+with one argument, behave just like the old ones.
+
+
+Эта новая версия make-adder возвращает замыкание, которое, при вызове
+его с одним аргументом, действует так же как и его предыдущая версия.
+
+
+> (setq addx (make-adderb 1)) #<Interpreted-Function BF1C66> >
+  (funcall addx 3) 4
+
+
+> (setq addx (make-adderb 1)) #<Interpreted-Function BF1C66> >
+(funcall addx 3) 4
+
+
+However, when the new type of adder is called with a non-nil second
+argument, its internal copy of n will be reset to the value passed as
+the ﬁrst argument:
+
+Тем не менее если новую версию вызвать со вторым аргументом, не равным
+nil, то его внутренняя копия переменной n будет установлена в
+значение, переданное первым аргументом:
+
+
+> (funcall addx 100 t) 100 > (funcall addx 3) 103
+
+> (funcall addx 100 t) 100 > (funcall addx 3) 103
+
+
+It’s even possible to return a group of closures which share the same
+data objects. Figure 2.1 contains a function which creates primitive
+databases. It takes an assoc-list (db), and returns a list of three
+closures which query, add, and delete entries, respectively.
+
+Более того, можно вернуть набор замыканий, которые разделяют одно
+состояние. Рисунок 2.1 содержит функцию, которая создает примитивную
+базу данных. В качестве аргумента она принимает ассоциативный список
+(база данных) и возвращает список из трех замыканий для выборки,
+добавления и удаления данных соответственно.
+
+
+— FIXME: Тут есть ссылка на картинку 2.1, но тут картинки никак не
+нумеруются, что собсно с ними делать? — cvb
+
+FIXME: assoc-list я перевел, хотя это в общем довольно устоявшийся
+термин в лиспе, стоило ли - я не знаю. — cvb
+
+Each call to make-dbms makes a new database—a new set of functions
+closed over their own shared copy of an assoc-list.
+
+
+Каждый вызов make-dbms создает новую базу данных - новый набор
+функций, лексически замкнутых относительно разделяемого ими
+ассоциативного списка.
+
+
+> (setq cities (make-dbms ’((boston . us) (paris . france))))
+
+> (setq cities (make-dbms ’((boston . us) (paris . france))))
+
+
+(#<Interpreted-Function 8022E7> #<Interpreted-Function 802317>
+#<Interpreted-Function 802347>) (defun make-dbms (db)
+
+
+(#<Interpreted-Function 8022E7> #<Interpreted-Function 802317>
+#<Interpreted-Function 802347>) (defun make-dbms (db)
+
+
+(list
+  #’(lambda (key)
+      (cdr (assoc key db)))
+  ago)
+
+
+(list
+  #’(lambda (key)
+      (cdr (assoc key db)))
+  ago)
+
+(push (cons key val) db)
+
+
+(push (cons key val) db)
+
+
+key)
+
+
+key)
+
+
+#’(lambda (key)
+
+
+#’(lambda (key)
+§
+
+
+(setf db (delete key db :key #’car))
+
+
+(setf db (delete key db :key #’car))
+
+
+key)))
+
+
+key)))
+
+
+Figure 2.1: Three closures share a list.
+
+
+Рисунок 2.1: Три замыкания делят список.
+
+
+The actual assoc-list within the database is invisible from the
+outside world—we can’t even tell that it’s an assoc-list—but it can be
+reached through the functions which are components of cities:
+
+Настоящий ассоциативный список внутри базы данных невидим для внешнего
+мира, мы даже не можем сказать что это ассоциативный список, но мы
+может взаимодействовать с ним при помощи функций:
+
+
+— FIXME — cvb
+
+> (funcall (car cities) ’boston) US > (funcall (second cities) ’london
+  ’england) LONDON > (funcall (car cities) ’london) ENGLAND
+
+
+> (funcall (car cities) ’boston) US >(funcall (second cities) ’london
+’england) LONDON > (funcall (car cities) ’london) ENGLAND
+
+
+Calling the car of a list is a bit ugly. In real programs, the access
+functions might instead be entries in a structure. Using them could
+also be cleaner—databases could be reached indirectly via functions
+like:
+
+Вызывать голову списка - не самое красивое решение. В настоящих
+программах функции для доступа могут быть, например, элементами
+структуры. Их использование может быть проще - база данных может быть
+доступна не напрямую, через функции, например:
+
+
+(defun lookup (key db) (funcall (car db) key))
+
+
+(defun lookup (key db) (funcall (car db) key)) History of edits
+(Latest: zoid 1 year, 10 months ago) §
+
+
+However, the basic behavior of closures is independent of such
+reﬁnements.
+
+
+Тем не менее поведение замыканий не зависит от подобных тонкостей.
+
+
+In real programs, the closures and data structures would also be more
+elaborate than those we see in make-adder or make-dbms. The single
+shared variable could be any number of variables, each bound to any
+sort of data structure.
+
+В настоящих программах замыкания и структуры данных могут быть гораздо
+сложней тех, что мы видели в make-adder или make-dbms. Вместо одной
+разделяемой переменной может быть любой набор переменных, каждая из
+которых связана с какой-нибудь структурой данных.
+
+
+Closures are one of the distinct, tangible beneﬁts of Lisp. Some Lisp
+programs could, with effort, be translated into less powerful
+languages. But just try to translate a program which uses closures as
+above, and it will become evident how much work this abstraction is
+saving us. Later chapters will deal with closures in more
+detail. Chapter 5 shows how to use them to build compound functions,
+and Chapter 6 looks at their use as a substitute for traditional data
+structures.
+
+Замыкания - одно из явных, осязаемых достоинств лиспа. Некоторые
+программы на лиспе могут быть, с некоторыми усилиями, перенесены на
+менее мощный язык, но попробуйте перевести программу, использующую
+замыкания, например, как приведенная выше, и станет очевидно насколько
+меньше работы нам пришлось проделать имея такую абстракцию как
+замыкание. В следующих главах мы рассмотрим замыкания более
+детально. Глава 5 покажет нам, как использовать их для построения еще
+более сложных функций
