@@ -1,0 +1,66 @@
+On Lisp - Chapter 1
+
+На Лисп - Глава 1
+
+
+The Extensible Language
+
+Расширяемый язык
+
+
+Not long ago, if you asked what Lisp was for, many people would have
+answered “for artiﬁcial intelligence.” In fact, the association
+between Lisp and AI is just an accident of history. Lisp was invented
+by John McCarthy, who also invented the term “artiﬁcial intelligence.”
+His students and colleagues wrote their programs in Lisp, and so it
+began to be spoken of as an AI language. This line was taken up and
+repeated so often during the brief AI boom in the 1980s that it became
+almost an institution.
+
+Не так давно, если бы вы спросили, для чего нужен Лисп, то многие бы
+ответили «для искусственного интеллекта». На самом деле, связь между
+Лисп и ИИ – просто историческая случайность. Лисп был изобретен Джоном
+Маккарти (John McCarthy), который также придумал термин «искусственный
+интеллект». Его студенты и коллеги писали свои программы на Лисп,
+поэтому о Лисп стали говорить как о языке для задач ИИ. Во времена
+бума ИИ в 1980-х эта идея обсуждалась и повторялась настолько часто,
+что стала практически непременным атрибутом.  History of edits
+
+
+Fortunately, word has begun to spread that AI is not what Lisp is all
+about. Recent advances in hardware and software have made Lisp
+commercially viable: it is now used in Gnu Emacs, the best Unix
+text-editor; Autocad, the industry standard desktop CAD program; and
+Interleaf, a leading high-end publishing program. The way Lisp is used
+in these programs has nothing whatever to do with AI.
+
+К счастью, стали ходить разговоры о том, что ИИ – это не единственная
+область применения Лисп. Недавние успехи в области аппаратного и
+программного обеспечения сделали Лисп коммерчески жизнеспособным:
+сейчас он используется в Gnu Emacs – лучшем текстовом редакторе для
+Unix; Autocad – индустриальном стандарте среди САПР для настольных
+компьютеров и Interleaf – распространенной профессиональной
+издательской программе. Использование Лисп в этих программах
+совершенно никак не связано с ИИ.
+
+
+If Lisp is not the language of AI, what is it? Instead of judging Lisp
+by the company it keeps, let’s look at the language itself. What can
+you do in Lisp that you can’t do in other languages? One of the most
+distinctive qualities of Lisp is the way it can be tailored to suit
+the program being written in it. Lisp itself is a Lisp program, and
+Lisp programs can be expressed as lists, which are Lisp data
+structures. Together, these two principles mean that any user can add
+operators to Lisp which are indistinguishable from the ones that come
+built-in.
+
+Если Lisp не язык ИИ, тогда что это? Вместо того, чтобы судить о Лисп
+по использующим его компаниям, давайте посмотрим на сам язык. Что вы
+можете сделать в Лисп и не сможете в других языках? Одна из наиболее
+отличительных черт Лисп – гибкость – позволяет ему лучше
+подстраиваться под задачу FIXME. Сам по себе Лисп является программой
+на Лисп, а программы на Лисп могут быть выражены в виде списков,
+которые в свою очередь в Лисп являются структурами данных. Вместе эти
+два принципа означают то, что любой пользователь может добавить
+операторы в Лисп так, что они не будут отличаться от встроенных в
+язык.

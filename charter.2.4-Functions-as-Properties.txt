@@ -1,0 +1,245 @@
+2.4 Functions as Properties
+
+2.4 Функции в качестве свойств
+
+
+The fact that functions are Lisp objects also allows us to write
+programs which can be extended to deal with new cases on the
+ﬂy. Suppose we want to write a function which takes a type of animal
+and behaves appropriately. In most languages, the way to do this would
+be with a case statement, and we can do it this way in Lisp as well:
+
+То обстоятельство, что функции Лисп являются объектами, также
+позволяет нам писать программы, которые могут быть расширены на лету
+для работы в изменившихся условиях. Допустим, мы хотим написать
+функцию, принимающую аргумент – вид животного и ведущую себя
+соответственно. В большинстве языков естественным средством для этого
+будет оператор case, и мы точно так же можем это сделать и в Lisp:
+History of edits (Latest: zoid 1 year, 8 months ago) §
+
+
+(defun behave (animal) (case animal (dog (wag-tail) (bark)) (rat
+(scurry) (squeak)) (cat (rub-legs) (scratch-carpet))))
+
+(defun behave (animal) (case animal (dog (wag-tail) (bark)) (rat
+(scurry) (squeak)) (cat (rub-legs) (scratch-carpet))))
+
+
+What if we want to add a new type of animal? If we were planning to
+add new animals, it would have been better to deﬁne behave as follows:
+
+Что, если нам потребуется добавить новый тип животного? Если бы мы
+хотели добавить новых животных, то было бы лучше определить behave
+следующим образом:
+
+
+(defun behave (animal) (funcall (get animal ’behavior)))
+
+(defun behave (animal) (funcall (get animal ’behavior)))
+
+
+and to deﬁne the behavior of an individual animal as a function
+stored, for example, on the property list of its name:
+
+и определить поведение отдельного животного как функцию, сохраненную,
+к примеру, в списке свойств его имени:
+
+
+(setf (get ’dog ’behavior)
+      #’(lambda ()
+           (wag-tail)
+           (bark)))
+
+
+(setf (get ’dog ’behavior)
+      #’(lambda ()
+           (wag-tail)
+           (bark)))
+
+
+This way, all we need do in order to add a new animal is deﬁne a new
+property. No functions have to be rewritten.
+
+В таком случае, все, что потребуется сделать для добавления нового
+животного это определить новое свойство. Никаких функций переписывать
+не нужно.
+
+
+The second approach, though more ﬂexible, looks slower. It is. If
+speed were critical, we would use structures instead of property lists
+and, especially, compiled instead of interpreted functions. (Section
+2.9 explains how to make these.) With structures and compiled
+functions, the more ﬂexible type of code can approach or exceed the
+speed of versions using case statements.
+
+Другой подход, несмотря на большую гибкость кажется медленным. Так и
+есть. Если скорость была бы критична, то мы использовали бы структуры
+вместо списков свойств и, главным образом, компилированные, вместо
+интерпретируемых функций. (Раздел 2.9 объясняет, как это
+сделать). Более гибкий вид кода, со структурами и компилированными
+функциями , может приблизиться или обогнать по скорости версии,
+использующие оператор case.
+
+
+This use of functions corresponds to the concept of a method in
+object-oriented programming. Generally speaking, a method is a
+function which is a property of an object, and that’s just what we
+have. If we add inheritance to this model, we’ll have all the elements
+of object-oriented programming. Chapter 25 will show that this can be
+done with surprisingly little code.
+
+Такое использование функций передаёт концепцию методов в
+объектно-ориентированном программировании. Собственно, метод – это
+функция, являющаяся свойством объекта, и это всё. Если мы добавим
+наследование в эту модель, то получим все элементы
+объектно-ориентированного программирования. Глава 25 покажет, как
+сделать это с удивительно маленьким кодом.
+
+
+One of the big selling points of object-oriented programming is that
+it makes programs extensible. This prospect excites less wonder in the
+Lisp world, where extensibility has always been taken for granted. If
+the kind of extensibility we need does not depend too much on
+inheritance, then plain Lisp may already be sufﬁcient.
+
+Одним из больших преимуществ объектно-ориентированного
+программирования является расширяемость. Такая перспектива не особо
+удивительна в мире Лиспа, где расширяемость всегда была в порядке
+вещей. Если она не очень сильно зависит от наследования, то простоты
+Лиспа уже может хватать.
+
+
+2.5 Scope
+
+2.5 Связывание переменных
+
+
+Common Lisp is a lexically scoped Lisp. Scheme is the oldest dialect
+with lexical scope; before Scheme, dynamic scope was considered one of
+the deﬁning features of Lisp.
+
+Common Lisp — Лисп с лексическим связыванием. Scheme является
+старейшим диалектом с лексическим связыванием; до Scheme динамическое
+связывание считалось одним из особенностей Лиспа.
+
+
+— Давайте тогда уж и Common Lisp переводить. Как в вики, например
+http://ru.wikipedia.org/wiki/Лисп или в книжке Э. Хювёнен, И. Сеппянен
+Мир Лиспа. http://progbook.ru/lisp/409-hyuvenen-...  — zoid
+
+— Не понял, что имеется в виду, переводить само название "common
+lisp"? Если так, то считаю такое неправильным, да и не перевести его
+вменяемым образом. — cvb
+
+— В тех ссылках оно называется "Коммон Лисп". Я изначально не
+переводил и не планировал оригинальные названия языков
+программирования (Lisp, Pascal, Fortran), но местная публика
+потребовала перевести. Спорить о такой ерунде смысла не вижу никакого,
+потому как вернуть оригинальные названия легко при помощи небольшого
+скрипта. — zoid
+
+
+The difference between lexical and dynamic scope comes down to how an
+implementation deals with free variables. A symbol is bound in an
+expression if it has been established as a variable, either by
+appearing as a parameter, or by variable-binding operators like let
+and do. Symbols which are not bound are said to be free. In this
+example, scope comes into play:
+
+Разница между лексическим и динамичским связыванием заключается в том,
+как реализация поступает со свободными переменными. Символ связывается
+в выражении, если он используется в роли переменной, например как
+аргумент или при помощи операторов связывания таких, как let и
+do. Символы, которые остаются несвязанными, называются свободными. В
+данном примере связывание проявляет себя:
+
+
+(let ((y 7)) (defun scope-test (x) (list x y)))
+
+(let ((y 7)) (defun scope-test (x) (list x y)))
+
+
+Within the defun expression,x is bound and y is free. Free variables
+are interesting because it’s not obvious what their values should
+be. There’s no uncertainty about the value of a bound variable—when
+scope-test is called, the value of x should be whatever is passed as
+the argument. But what should be the value of y? This is the question
+answered by the dialect’s scope rules.
+
+Внутри defun x является связанной переменной а y - свободной. Интерес
+к свободным переменным появляется потому, что неясно, каким должно
+быть их значение. Нет никакой неопределенности в значении связанной
+переменной -- когда scope-test будет вычисляться значение x будет тем,
+что передадут в качестве аргумента, но каким должно быть значение y?
+На этот вопрос могут ответить правила связывания переменных
+конкретного диалекта.
+
+
+In a dynamically scoped Lisp, to ﬁnd the value of a free variable when
+executing scope-test, we look back through the chain of functions that
+called it. When we ﬁnd an environment where y was bound, that binding
+of y will be the one used in scope-test. If we ﬁnd none, we take the
+global value of y. Thus, in a dynamically scoped Lisp, y would have
+the value it had in the calling expression:
+
+В лиспе с динапической областью видимости для того, чтобы найти
+значение свободной переменной во время выполнения scope-test мы
+смотрим назад по цепочке вызовов функций, когда мы находим окружение,
+в котором y - связана, мы используем это связывание в scope-test, если
+же такого окружения нет, будет взято значение глобальной переменной
+y. Таким образом в лиспе с динамическим связыванием y будет содержать
+то значение, которое оно содержало в вызывающем выражении:
+
+
+> (let ((y 5)) (scope-test 3)) => (3 5)
+
+> (let ((y 5)) (scope-test 3)) => (3 5)
+
+
+With dynamic scope, it means nothing that y was bound to 7 when
+scope-test was deﬁned. All that matters is that y had a value of 5
+when scope-test was called.
+
+При динамическом связывании ничего не значит тот факт, что y было
+связано со значением 7 при объявлении scope-test. Имеет значение
+только то, что y содержало значение 5 когда scope-test была вызвана.
+
+
+In a lexically scoped Lisp, instead of looking back through the chain
+of calling functions, we look back through the containing environments
+at the time the function was deﬁned. In a lexically scoped Lisp, our
+example would catch the binding of y where scope-test was deﬁned. So
+this is what would happen in Common Lisp:
+
+В лиспе с лексическим связыванием вместо просматривания всей цепочки
+вызовов функций мы смотрим назад, на окружение в тот момент, когда
+функция была объявлена. В лиспе с лексическим связыванием наш пример
+захватит значение y в тот момент, когда scope-test была объявлена. Так
+что в Common Lisp произойдет следующее:
+
+> (let ((y 5)) (scope-test 3)) => (3 7)
+
+> (let ((y 5)) (scope-test 3)) => (3 7)
+
+Here the binding of y to 5 at the time of the call has no effect on
+the returned value.
+
+Здесь связывание y со значением 5 во время вызова никак не повлияло на
+возвращаемое значение.
+
+
+Though you can still get dynamic scope by declaring a variable to be
+special, lexical scope is the default in Common Lisp. On the whole,
+the Lisp community seems to view the passing of dynamic scope with
+little regret. For one thing, it used to lead to horribly elusive
+bugs. But lexical scope is more than a way of avoiding bugs. As the
+next section will show, it also makes possible some new programming
+techniques.
+
+Несмотря на то, что вы можете получить динамическое связывание,
+объявляя переменную специальной, лексические связывание являются
+стандартными для Common Lisp. В основном комьюнити относится к
+динамическому связыванию с недоверием. Так, например, оно может быть
+причиной опасных неуловимых ошибок, но лексические замыкания - это
+больше чем просто способ избежать ошибки. В следующем параграфе как с
+его помощью можно использовать некоторые новые техники.

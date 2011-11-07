@@ -1,0 +1,57 @@
+On Lisp - Chapter 2
+
+На Лисп - Глава 2
+
+
+Functions
+
+Функции
+
+
+Functions are the building-blocks of Lisp programs. They are also the
+building-blocks of Lisp. In most languages the + operator is something
+quite different from user-deﬁned functions. But Lisp has a single
+model, function application, to describe all the computation done by a
+program. The Lisp + operator is a function, just like the ones you can
+deﬁne yourself.
+
+Функции - стандартные блоки программ Лисп. Они также и стандартные
+блоки Лисп. В большинстве языков оператор ”+” – это нечто, совершенно
+отличное от определяемых пользователем функций. Но у Лисп есть единая
+модель для описания всех вычислений, сделанных программой – применение
+функций. В Лисп оператор ”+” – это точно такая же функция, какую вы
+можете определить сами.
+
+
+In fact, except for a small number of operators called special forms,
+the core of Lisp is a collection of Lisp functions. What’s to stop you
+from adding to this collection? Nothing at all: if you think of
+something you wish Lisp could do, you can write it yourself, and your
+new function will be treated just like the built-in ones.
+
+В действительности, за исключением небольшого количества операторов,
+называемых специальными формами, ядро Лисп – это коллекция функций
+Лисп. Что же остановит вас от пополнения коллекции? Совершенно
+ничего. Если вы думаете о чем-нибудь, что хотели бы, чтобы делал Лисп,
+то можете написать это сами, и ваша новая функция будет работать точно
+так же, как встроенная.
+
+
+This fact has important consequences for the programmer. It means that
+any new function could be considered either as an addition to Lisp, or
+as part of a speciﬁc application. Typically, an experienced Lisp
+programmer will write some of each, adjusting the boundary between
+language and application until the two ﬁt one another perfectly. This
+book is about how to achieve a good ﬁt between language and
+application. Since everything we do toward this end ultimately depends
+on functions, functions are the natural place to begin.
+
+Этот факт имеет важные следствия для программиста. Это означает, что
+любую новую функцию можно рассматривать или как дополнение к Лисп, или
+как часть определенного приложения. Как правило, опытный программист
+Лисп напишет всего понемногу, корректируя границу между языком и
+приложением, пока они не подойдут друг другу идеально. Эта книга о
+том, как достигнуть хорошей подгонки между языком и
+приложением. Поскольку все, что мы делаем в этом направлении, в
+конечном счете, зависит от функций, функция – это естественная точка
+отсчета.

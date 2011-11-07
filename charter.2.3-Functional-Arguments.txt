@@ -1,0 +1,264 @@
+2.3 Functional Arguments
+
+2.3 Функциональные аргументы
+
+
+Having functions as data objects means, among other things, that we
+can pass them as arguments to other functions. This possibility is
+partly responsible for the importance of bottom-up programming in
+Lisp.
+
+Представление функций как объектов данных означает, помимо прочего,
+что мы можем передавать их в качестве аргументов другим функциям. Эта
+возможность отчасти отвечает за важность восходящего программирования
+в Лисп.
+
+
+A language which allows functions as data objects must also provide
+some way of calling them. In Lisp, this function is apply. Generally,
+we call apply with two arguments: a function, and a list of arguments
+for it. The following four expressions all have the same effect:
+
+Язык, допускающий функции в качестве объектов данных, должен также
+предоставить определенные способы их вызова. В Лисп это функция
+apply. Вообще, мы вызываем apply с двумя аргументами: функцией и
+списком ее аргументов. Все последующие четыре выражения выполняют одно
+и то же действие:
+
+
+(+12)
+
+(+12)
+
+
+(apply #’+ ’(1 2))
+
+(apply #’+ ’(1 2))
+
+
+(apply (symbol-function ’+) ’(1 2))
+
+(apply (symbol-function ’+) ’(1 2))
+
+
+(apply #’(lambda (x y) (+ x y)) ’(1 2))
+
+(apply #’(lambda (x y) (+ x y)) ’(1 2))
+
+
+In Common Lisp, apply can take any number of arguments, and the
+function given ﬁrst will be applied to the list made by consing the
+rest of the arguments onto the list given last. So the expression
+
+В Коммон Лисп apply может принимать любое число аргументов, и функция,
+заданная первой, будет применена к списку, полученному путем синтеза в
+него оставшихся аргументов, заданному в конце. Так, выражение
+
+(apply #’+ 1 ’(2))
+
+(apply #’+ 1 ’(2))
+
+
+is equivalent to the preceding four. If it is inconvenient to give the
+arguments as a list, we can use funcall, which differs from apply only
+in this respect. This expression
+
+эквивалентно четырем предыдущим. Если задавать аргументы в виде списка
+неудобно, то мы можем использовать funcall, который отличается от
+apply только в этом отношении. Это выражение
+
+
+(funcall #’+ 1 2)
+
+(funcall #’+ 1 2)
+
+
+has the same effect as those above.
+
+
+выполняет то же действие, что и все предыдущие.
+
+
+Many built-in Common Lisp functions take functional arguments. Among
+the most frequently used are the mapping functions. For example,
+mapcar takes two or more arguments, a function and one or more lists
+(one for each parameter of the function), and applies the function
+successively to elements of each list:
+
+Множество встроенных в Коммон Лисп функций принимает функциональные
+аргументы. Среди наиболее широко используемых находятся отображающие
+функции. Например, mapcar принимает два или более аргументов, функцию
+и один или более списков (один на каждый параметр функции) и применяет
+функцию последовательно к элементам каждого списка:
+
+
+> (mapcar #’(lambda (x) (+ x 10))
+
+> (mapcar #’(lambda (x) (+ x 10)) ’(1 2 3))
+
+
+’(1 2 3)) (11 12 13) > (mapcar #’+
+
+
+(11 12 13)
+
+
+— В не переведенном варианте код отформатирован ужасно, везде,
+поправил насколько возможно, кто и за что его так покарал? — cvb
+
+’(1 2 3)
+
+
+> (mapcar #’+ ’(1 2 3) ’(10 100 1000))
+
+
+’(10 100 1000)) (11 102 1003)
+
+
+(11 102 1003)
+
+
+Lisp programs frequently want to do something to each element of a
+list and get back a list of results. The ﬁrst example above
+illustrates the conventional way to do this: make a function which
+does what you want done, and mapcar it over the list.
+
+Программы на Лисп часто испытывают необходимость делать что-то с
+каждым аргументом списка и вернуть назад список результатов. Первый
+пример, приведенный выше, показывает обычный способ это реализовать:
+создать функцию, которая выполняет то, что вам нужно, и при помощи
+mapcar применить ее к списку.
+
+
+Already we see how convenient it is to be able to treat functions as
+data. In many languages, even if we could pass a function as an
+argument to something like mapcar, it would still have to be a
+function deﬁned in some source ﬁle beforehand. If just one piece of
+code wanted to add 10 to each element of a list, we would have to
+deﬁne a function, called plus ten or some such, just for this one
+use. With lambda-expressions, we can refer to functions directly.
+
+Мы уже видим, насколько удобно иметь возможность обращаться с
+функциями, как с данными. Во многих языках, даже если мы могли бы
+передать функцию в качестве аргумента чему-то, вроде mapcar, она бы,
+тем не менее, была функцией, определенной заранее в каком-нибудь
+исходном файле. Если бы требовался именно цельный код, добавляющий 10
+к к каждому элементу списка, мы бы определили функцию с именем plus
+ten или каким-то подобным только для этого единственного применения. С
+помощью лямбда выражений мы можем ссылаться на функции
+непосредственно.
+
+
+One of the big differences between Common Lisp and the dialects which
+preceded it are the large number of built-in functions that take
+functional arguments. Two of the most commonly used, after the
+ubiquitous mapcar, are sort and remove-if. The former is a
+general-purpose sorting function. It takes a list and a predicate, and
+returns a list sorted by passing each pair of elements to the
+predicate.
+
+Одно из существенных отличий между Коммон Лисп и предшествовавшими ему
+диалектами состоит в огромном количестве встроенных функций,
+принимающих функциональные аргументы. Две из наиболее используемых
+после вездесущего mapcar – это sort и remove-if. Первая из них
+является функцией сортировки общего назначения. Она принимает список
+аргументов и предикат, а возвращает список, отсортированный
+пропусканием через предикат каждой пары элементов.
+
+
+> (sort ’(1 4 2 5 6 7 3) #’<) (123456 7)
+
+> (sort ’(1 4 2 5 6 7 3) #’<) (123456 7)
+
+
+To remember how sort works, it helps to remember that if you sort a
+list with no duplicates by <, and then apply < to the resulting list,
+it will return true.
+
+Чтобы понять, как работает sort, полезно осознать, что если вы
+сортируете список без повторяющихся элементов с помощью <, то < вернет
+true, если его применить к получившемуся списку.
+
+
+If remove-if weren’t included in Common Lisp, it might be the ﬁrst
+utility you would write. It takes a function and a list, and returns
+all the elements of the list for which the function returns false.
+
+Если бы remove-if не был бы включен в Коммон Лисп, то это, возможно,
+была бы первая утилита, которую бы вы написали. Она принимает функцию
+и список, а возвращает все элементы списка, для которых функция
+вернула false.
+
+
+> (remove-if #’evenp ’(123456 7)) (1357)
+
+> (remove-if #’evenp ’(123456 7)) (1357)
+
+
+As an example of a function which takes functional arguments, here is
+a deﬁnition of a limited version of remove-if:
+
+В качестве примера функции, принимающей функциональные аргументы,
+здесь приводится определение ограниченной версии remove-if:
+
+
+(defun our-remove-if (fn lst)
+
+(defun our-remove-if (fn lst)
+
+
+(if (null lst)
+
+(if (null lst)
+
+
+nil
+
+nil
+
+
+(if (funcall fn (car lst))
+
+
+(if (funcall fn (car lst))
+
+
+(our-remove-if fn (cdr lst))
+
+
+(our-remove-if fn (cdr lst))
+
+
+(cons (car lst) (our-remove-if fn (cdr lst))))))
+
+(cons (car lst) (our-remove-if fn (cdr lst))))))
+
+
+Note that within this deﬁnition fn is not sharp-quoted. Since
+functions are data objects, a variable can have a function as its
+regular value. That’s what’s happening here. Sharp-quote is only for
+referring to the function named by a symbol—usually one globally
+deﬁned as such with defun.
+
+Заметим, что в этом определении fn используется без диеза-кавычки. Так
+как функции являются объектами данных, то переменные могут содержать
+функцию в качестве обычного значения. Вот что здесь
+происходит. Диез-кавычка служит только для ссылки на функцию, имеющую
+символьное имя, как правило, глобально определенное с помощью defun.
+
+
+As Chapter 4 will show, writing new utilities which take functional
+arguments is an important element of bottom-up programming. Common
+Lisp has so many utilities built-in that the one you need may exist
+already. But whether you use built-ins like sort, or write your own
+utilities, the principle is the same. Instead of wiring in
+functionality, pass a functional argument.
+
+Как покажет глава 4, написание новых утилит, принимающих
+функциональные аргументы, является важным элементом программирования
+снизу-вверх. В Коммон Лисп есть так много встроенных утилит, что та,
+которая вам требуется, возможно, уже существует. Но используете ли вы
+встроенные функции, как sort, или пишете собственные утилиты, принцип
+тот же. Вместо того, чтобы вписывать функциональность, передавайте
+функциональный аргумент.
+

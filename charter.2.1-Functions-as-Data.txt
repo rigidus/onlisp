@@ -1,0 +1,52 @@
+2.1 Functions as Data
+
+2.1 Функции в качестве данных
+
+
+Two things make Lisp functions different. One, mentioned above, is
+that Lisp itself is a collection of functions. This means that we can
+add to Lisp new operators of our own. Another important thing to know
+about functions is that they are Lisp objects.
+
+Функции Лисп отличаются двумя вещами. Первая, упомянутая выше, это то,
+что сам Лисп – коллекция функций. Это означает, что мы можем добавить
+к Лисп свои новые операторы. Другая важная вещь, которую нужно знать о
+функциях, это то, что они являются объектами Лисп.
+
+
+Lisp offers most of the data types one ﬁnds in other languages. We get
+integers and ﬂoating-point numbers, strings, arrays, structures, and
+so on. But Lisp supports one data type which may at ﬁrst seem
+surprising: the function. Nearly all programming languages provide
+some form of function or procedure. What does it mean to say that Lisp
+provides them as a data type? It means that in Lisp we can do with
+functions all the things we expect to do with more familiar data
+types, like integers: create new ones at runtime, store them in
+variables and in structures, pass them as arguments to other
+functions, and return them as results.
+
+В Лисп можно найти большинство типов данных, которые имеются в других
+языках. Такие, как целые числа и числа с плавающей запятой, строки,
+массивы, структуры и так далее. А еще Лисп поддерживает один тип
+данных, который может поначалу вызвать удивление: функция. Почти все
+языки программирования в том или ином виде поддерживают функции или
+процедуры. Что значит, когда говорят, что Лисп представляет функции
+как тип данных? Это значит, что в Лисп мы можем делать с ними то же
+самое, что могли бы делать с известными типами данных, например,
+целыми числами: создавать новые во время выполнения, сохранять их в
+переменных и в структурах, передавать их как параметры другим функциям
+и возвращать их как результаты.
+
+
+The ability to create and return functions at runtime is particularly
+useful. This might sound at ﬁrst like a dubious sort of advantage,
+like the self-modifying machine language programs one can run on some
+computers. But creating new functions at runtime turns out to be a
+routinely used Lisp programming technique.
+
+Способность создавать и возвращать функции во время выполнения
+особенно полезна. Сначала кажется, что это сомнительное преимущество,
+подобно такому, как самомодифицирующиеся программы на машинном языке,
+которые могут работать на некоторых компьютерах. Но создание новых
+функций во время выполнения, оказывается, обычная методика
+программирования на Лисп.

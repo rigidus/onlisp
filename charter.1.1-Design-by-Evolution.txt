@@ -1,0 +1,150 @@
+1.1 Design by Evolution
+
+1.1 Эволюция дизайна.
+
+
+Because Lisp gives you the freedom to deﬁne your own operators, you
+can mold it into just the language you need. If you’re writing a
+text-editor, you can turn Lisp into a language for writing
+text-editors. If you’re writing a CAD program, you can turn Lisp into
+a language for writing CAD programs. And if you’re not sure yet what
+kind of program you’re writing, it’s a safe bet to write it in
+Lisp. Whatever kind of program yours turns out to be, Lisp will,
+during the writing of it, have evolved into a language for writing
+that kind of program.
+
+Поскольку Лисп дает свободу в определении операторов, вы можете
+преобразовать его в тот язык, который вам нужен. Если вы пишете
+текстовый редактор, вы можете переделать Лисп в язык для написания
+текстовых редакторов. Если вы пишете САПР, то можете превратить Лисп в
+язык для написания САПР. И даже если вы пока не уверены насчет того,
+какую программу вы пишете, то беспроигрышный вариант – написать ее на
+Лисп. В какой бы вид программы она ни превратилась, Лисп в процессе ее
+написания будет эволюционировать в язык, предназначенный для написания
+такого вида программ.
+
+
+If you’re not sure yet what kind of program you’re writing? To some
+ears that sentence has an odd ring to it. It is in jarring contrast
+with a certain model of doing things wherein you (1) carefully plan
+what you’re going to do, and then (2) do it. According to this model,
+if Lisp encourages you to start writing your program before you’ve
+decided how it should work, it merely encourages sloppy thinking.
+
+Вы все еще не уверены, какого рода программу пишете? Для кого-то этот
+вопрос прозвучит странно. Такой разительный контраст с известной
+моделью разработки, где вы (1) тщательно планируете то, что
+собираетесь делать, а затем (2) делаете это. Если Лисп вдохновляет вас
+на написание программы до того, как вы определите способ ее работы, то
+согласно этой модели, такой подход лишь порождает хаотичное мышление.
+
+
+Well, it just ain’t so. The plan-and-implement method may have been a
+good way of building dams or launching invasions, but experience has
+not shown it to be as good a way of writing programs. Why? Perhaps
+it’s because computers are so exacting. Perhaps there is more
+variation between programs than there is between dams or invasions. Or
+perhaps the old methods don’t work because old concepts of redundancy
+have no analogue in software development: if a dam contains 30% too
+much concrete, that’s a margin for error, but if a program does 30%
+too much work, that is an error.
+
+Ну, это совсем не так. Метод «спланируй и реализуй», возможно, был
+хорош для строительства плотин или совершения военных вторжений, но
+опыт не показал, что это хороший способ написания программ. Почему?
+Возможно, потому что он слишком точный. Может быть, между программами
+больше различий, чем между дамбами или вторжениями. Или, наверное,
+старые методы не работают, поскольку старая идея избыточности не имеет
+аналогов в области разработки программного обеспечения: если дамба
+содержит бетона на 30% выше нормы, то это граница допустимого предела,
+но если программа работает на 30% больше, то это недопустимо FIXME.
+
+
+It may be difﬁcult to say why the old method fails, but that it does
+fail, anyone can see. When is software delivered on time? Experienced
+programmers know that no matter how carefully you plan a program, when
+you write it the plans will turn out to be imperfect in some
+way. Sometimes the plans will be hopelessly wrong. Yet few of the
+victims of the plan-and-implement method question its basic
+soundness. Instead they blame human failings: if only the plans had
+been made with more foresight, all this trouble could have been
+avoided. Since even the very best programmers run into problems when
+they turn to implementation, perhaps it’s too much to hope that people
+will ever have that much foresight. Perhaps the plan-and-implement
+method could be replaced with another approach which better suits our
+limitations.
+
+Сложно сказать наверняка, почему старые методы не работают, но любой
+может видеть, что именно это и происходит. Когда программы сдавались
+вовремя? Опытные программисты знают, что вне зависимости от того,
+насколько тщательно вы планировали программу, в процессе ее написания
+планы в какой-то степени нарушатся. Иногда планы становятся безнадежно
+неверными. Но лишь немногие жертвы метода «спланируй и реализуй»
+ставят под сомнение его обоснованность. Вместо этого они начинают
+винить человеческие недостатки: если бы планы были более
+дальновидными, то всех этих неприятностей можно было бы
+избежать. Поскольку даже лучшие программисты, переходя к реализации,
+сталкиваются с проблемами, возможно, было бы слишком надеяться на то,
+что люди когда-нибудь станут такими прозорливыми. Вероятно, метод
+«спланируй и реализуй» может быть заменен другим подходом, более
+подходящим нашим критериям.
+
+
+We can approach programming in a different way, if we have the right
+tools. Why do we plan before implementing? The big danger in plunging
+right into a project is the possibility that we will paint ourselves
+into a corner. If we had a more ﬂexible language, could this worry be
+lessened? We do, and it is. The ﬂexibility of Lisp has spawned a whole
+new style of programming. In Lisp, you can do much of your planning as
+you write the program.
+
+Если у нас есть правильные инструменты, то мы можем подойти к
+программированию по-другому. Для чего планировать перед реализацией?
+Большая опасность в чрезмерном планировании состоит в возможности быть
+загнанным в угол. Мы делаем, вот и все. Гибкость Лисп породила
+полностью новый стиль программирования. В Лисп многое можно
+спланировать в процессе написания программы.
+
+
+Why wait for hindsight? As Montaigne found, nothing clariﬁes your
+ideas like trying to write them down. Once you’re freed from the worry
+that you’ll paint yourself into a corner, you can take full advantage
+of this possibility. The ability to plan programs as you write them
+has two momentous consequences: programs take less time to write,
+because when you plan and write at the same time, you have a real
+program to focus your attention; and they turn out better, because the
+ﬁnal design is always a product of evolution. So long as you maintain
+a certain discipline while searching for your program’s destiny—so
+long as you always rewrite mistaken parts as soon as it becomes clear
+that they’re mistaken—the ﬁnal product will be a program more elegant
+than if you had spent weeks planning it beforehand.
+
+Зачем ждать оценок прошлого? Как заметил Монтень, ничто так не
+проясняет наши идеи, как попытка записать их. Однажды вы освободитесь
+от беспокойства, которе загоняет вас в угол; вы сможете извлечь всю
+выгоду из этой возможности. Способность планировать программы по мере
+их написания имеет два важных последствия: на написание программ
+уходит меньше времени, потому что, когда вы пишете и планируете
+одновременно, у вас есть настоящая программа, чтобы сосредоточить на
+ней свое внимание; они становятся лучше, потому что окончательная
+разработка – это всегда продукт эволюции. Таким образом в процессе
+написания программы вы постоянно переписываете ошибочные части, как
+только становится очевидна их несостоятельность, в итоге конечный
+продукт будет более элегантным решением, чем если бы вы потратили
+недели, планируя его заранее.
+
+
+Lisp’s versatility makes this kind of programming a practical
+alternative. Indeed, the greatest danger of Lisp is that it may spoil
+you. Once you’ve used Lisp for a while, you may become so sensitive to
+the ﬁt between language and application that you won’t be able to go
+back to another language without always feeling that it doesn’t give
+you quite the ﬂexibility you need.
+
+Приспособляемость Лисп делает этот вид программирования практической
+альтернативой. Действительно, самая большая опасность Лисп состоит в
+том, что он может избаловать вас. Один раз попробовав Лисп, вы можете
+стать настолько чувствительным к соответствию между языком и
+приложением, что будете не в состоянии вернуться назад к другому языку
+без постоянного ощущения того, что он не дает в полной мере ту
+гибкость, которая вам необходима.

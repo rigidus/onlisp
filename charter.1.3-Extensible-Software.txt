@@ -1,0 +1,409 @@
+1.3 Extensible Software
+
+1.3 Расширяемое программное обеспечение
+
+
+The Lisp style of programming is one that has grown in importance as
+software has grown in complexity. Sophisticated users now demand so
+much from software that we can’t possibly anticipate all their
+needs. They themselves can’t anticipate all their needs. But if we
+can’t give them software which does everything they want right out of
+the box, we can give them software which is extensible. We transform
+our software from a mere program into a programming language, and
+advanced users can build upon it the extra features that they need.
+
+Именно техника программирования на Лисп стала более важна по мере
+роста сложности программного обеспечения. Искушенные пользователи
+теперь требуют так много от ПО, что мы не имеем возможности
+предугадывать все их потребности. Они и сами не могут их
+предугадать. Но если мы не можем дать им софт, который делает всё, что
+они хотят, сразу из коробки, то мы можем дать им расширяемое
+программное обеспечение. Мы преобразуем наше ПО из обычных программ в
+язык программирования, и продвинутые пользователи могут надстраивать
+поверх него необходимые им дополнительные функции.
+
+
+— смысл 'mere' здесь - 'только', 'без примесей'. — achepkunov
+
+Bottom-up design leads naturally to extensible programs. The simplest
+bottom-up programs consist of two layers: language and
+program. Complex programs may be written as a series of layers, each
+one acting as a programming language for the one above. If this
+philosophy is carried all the way up to the topmost layer, that layer
+becomes a programming language for the user. Such a program, where
+extensibility permeates every level, is likely to make a much better
+programming language than a system which was written as a traditional
+black box, and then made extensible as an afterthought.
+
+Восходящий дизайн естественным образом ведет к расширяемым
+программам. Простейшие восходящие программы состоят из двух уровней:
+язык и программа. Сложные программы могут быть написаны как
+последовательность уровней, каждый из которых выступает в качестве
+языка для лежащего над ним. Если эту философию пронести через весь
+процесс до самого верхнего уровня, то тот уровень и станет программным
+языком для пользователя. Такая программа, где расширяемость проходит
+сквозь каждый уровень, вероятно, создает более хороший язык
+программирования, нежели системы, которые были написаны как
+традиционный черный ящик, и лишь с запозданием сделаны расширяемыми.
+History of edits (Latest: zoid 1 year, 10 months ago) §
+
+
+X Windows and TEX are early examples of programs based on this
+principle. In the 1980s better hardware made possible a new generation
+of programs which had Lisp as their extension language. The ﬁrst was
+Gnu Emacs, the popular Unix text-editor. Later came Autocad, the ﬁrst
+large-scale commercial product to provide Lisp as an extension
+language. In 1991 Interleaf released a new version of its software
+that not only had Lisp as an extension language, but was largely
+implemented in Lisp.
+
+X Windows и TEX – примеры первых программ, основанных на этом
+принципе. В 1980-е более хорошее оборудование сделало возможным новое
+поколение программ, которые использовали Лисп в качестве собственного
+языка расширений. Первым был Gnu Emacs – популярный текстовый редактор
+Unix. Позже появился Autocad – первый крупномасштабный коммерческий
+продукт, давший возможность использовать Лисп как расширяемый язык. В
+1991 году Interleaf представила новую версию своего продукта, который
+не только использовал Лисп как расширяемый язык, но и был в
+значительной степени на нем же и реализован.
+
+
+Lisp is an especially good language for writing extensible programs
+because it is itself an extensible program. If you write your Lisp
+programs so as to pass this extensibility on to the user, you
+effectively get an extension language for free. And the difference
+between extending a Lisp program in Lisp, and doing the same thing in
+a traditional language, is like the difference between meeting someone
+in person and conversing by letters. In a program which is made
+extensible simply by providing access to outside programs, the best we
+can hope for is two black boxes communicating with one another through
+some predeﬁned channel. In Lisp, extensions can have direct access to
+the entire underlying program. This is not to say that you have to
+give users access to every part of your program—just that you now have
+a choice about whether to give them access or not.
+
+Лисп – особенно хороший язык для написания расширяемых программ,
+потому что он сам расширяем. Если вы напишете свою программу на Лисп
+так, чтобы передать эту расширяемость пользователю, вы фактически
+получите расширяемый язык бесплатно. Различие между расширением
+Лисп-программы в Лисп и тем же самым, но на традиционном языке,
+равносильно различию между личной встречей с кем-нибудь и почтовой
+перепиской. В программе, которая сделана расширяемой просто за счет
+предоставления доступа к внешним программам, лучшее, на что мы можем
+рассчитывать – это два черных ящика, соединенных один с другим при
+помощи какого-нибудь заранее определенного протокола. В Лисп же
+расширения могут иметь прямой доступ ко всем подпрограммам. Это не
+означает, что вы должны предоставить пользователям доступ к каждой
+части своей программы – просто теперь у вас есть выбор, давать ли им
+доступ или нет.
+
+
+When this degree of access is combined with an interactive
+environment, you have extensibility at its best. Any program that you
+might use as a foundation for extensions of your own is likely to be
+fairly big—too big, probably, for you to have a complete mental
+picture of it. What happens when you’re unsure of something? If the
+original program is written in Lisp, you can probe it interactively:
+you can inspect its data structures; you can call its functions; you
+may even be able to look at the original source code. This kind of
+feedback allows you to program with a high degree of conﬁdence—to
+write more ambitious extensions, and to write them faster. An
+interactive environment always makes programming easier, but it is
+nowhere more valuable than when one is writing extensions.
+
+Когда такой уровень доступа встречается с интерактивным окружением,
+достигается наилучшая расширяемость. Любая программа, которую можно
+использовать как основу для собственных расширений – это, вероятно,
+довольно большая программа, возможно, слишком большая для того, чтобы
+вы держали в уме ее полный образ. Что происходит, когда вы в чем-то не
+уверены? Если программа написана на Лисп, вы можете испытать ее в
+диалоговом режиме: вы можете изучить ее структуры данных, можете
+вызвать ее функции, даже можете посмотреть на изначальный исходный
+код. Такой вид обратной связи дает вам возможность программировать с
+большой уверенностью: писать более мощные расширения и писать их
+быстрее. Диалоговое окружение всегда делает программирование проще, но
+оно приобретает имеет особую ценность при написании расширений.
+
+
+An extensible program is a double-edged sword, but recent experience
+has shown that users prefer a double-edged sword to a blunt
+one. Extensible programs seem to prevail, whatever their inherent
+dangers.
+
+Расширяемая программа – это обоюдоострый меч, тем не менее последний
+опыт показал, что пользователи предпочитают обоюдоострый меч
+тупому. Расширяемые программы, похоже, одерживают верх, несмотря на
+присущие им опасности.
+
+
+1.4 Extending Lisp
+
+1.4 Расширение Лисп
+
+
+There are two ways to add new operators to Lisp: functions and
+macros. In Lisp, functions you deﬁne have the same status as the
+built-in ones. If you want a new variant of mapcar, you can deﬁne one
+yourself and use it just as you would use mapcar. For example, if you
+want a list of the values returned by some function when it is applied
+to all the integers from 1 to 10, you could create a new list and pass
+it to mapcar:
+
+
+Существует два способа добавления в Лисп новых операторов: функции и
+макрос. В Лисп определяемые вами функции имеют тот же статус, что и
+встроенные. Если вы хотите новый вариант mapcar, вы можете сами его
+определить и использовать точно так же, как использовали бы
+mapcar. Например, если вам нужен список значений, возвращаемых некой
+функцией, примененной ко всем целым числам от 1 до 10, вы могли бы
+создать новый список и передать его mapcar:
+
+
+(mapcar fn (do* ((x 1 (1+ x)) (result (list x) (push x result))) ((= x
+10) (nreverse result))))
+
+
+(mapcar fn (do* ((x 1 (1+ x)) (result (list x) (push x result))) ((= x
+10) (nreverse result))))
+
+
+but this approach is both ugly and inefﬁcient. 2) Instead you could
+deﬁne a new mapping function map1-n (see page 54), and then call it as
+follows:
+
+но такой подход и уродливый и неэффективный. 2) место этого вы могли
+бы определить новую отображающую функцию map1-n (см. страницу 54) и
+затем ее вызвать следующим образом:
+
+
+2) You could write this more elegantly with the new Common Lisp series
+macros, but that only proves the same point, because these macros are
+an extension to Lisp themselves.
+
+2) Вы могли бы написать это более красиво при помощи
+последовательности новых макросов Коммон Лисп, но это лишь доказывает
+ту же точку зрения, так как эти макросы сами по себе являются
+расширением Лисп.
+
+
+(map1-n fn 10)
+
+(map1-n fn 10)
+
+
+Deﬁning functions is comparatively straightforward. Macros provide a
+more general, but less well-understood, means of deﬁning new
+operators. Macros are programs that write programs. This statement has
+far-reaching implications, and exploring them is one of the main
+purposes of this book.
+
+Функции определяются относительно просто. Макросы предоставляют более
+широкое, но и менее понятное средство определения новых
+операторов. Макросы – это программы, которые пишут программы. Это
+утверждение имеет глубокий смысл, и его раскрытие – одна из основных
+целей книги.
+
+
+The thoughtful use of macros leads to programs which are marvels of
+clarity and elegance. These gems are not to be had for
+nothing. Eventually macros will seem the most natural thing in the
+world, but they can be hard to understand at ﬁrst. Partly this is
+because they are more general than functions, so there is more to keep
+in mind when writing them. But the main reason macros are hard to
+understand is that they’re foreign. No other language has anything
+like Lisp macros. Thus learning about macros may entail unlearning
+preconceptions inadvertently picked up from other languages. Foremost
+among these is the notion of a program as something afﬂicted by rigor
+mortis. Why should data structures be ﬂuid and changeable, but
+programs not? In Lisp, programs are data, but the implications of this
+fact take a while to sink in.
+
+Осмысленное использование макросов ведет к программам, удивляющим
+ясностью и изящностью. Эти сокровища не даются просто так. В итоге
+макросы, наверное, самая естественная в мире вещь, но вначале они
+могут быть трудными для понимания. Частично это из-за того, что они
+имеют больше возможностей, чем функции, поэтому, когда их пишешь,
+больше приходится держать в голове. Но основная причина, почему
+макросы трудны для понимания, это потому, что они незнакомы. Никакой
+другой язык не имеет ничего, подобного Лисп-макросам. Таким образом,
+изучение макросов позволит рассеять предрассудки, неосторожно
+приобретенные от других языков. Самый главный из которых – это
+представление программы в виде чего-то, подверженного трупному
+окоченению. Почему структуры данных должны быть гибкими и изменяемыми,
+а программы нет? В Лисп программы – это данные, но требуется время,
+чтобы вникнуть в смысл этого факта.
+
+
+If it takes some time to get used to macros, it is well worth the
+effort. Even in such mundane uses as iteration, macros can make
+programs signiﬁcantly smaller and cleaner. Suppose a program must
+iterate over some body of code for x from a to b. The built-in Lisp do
+is meant for more general cases. For simple iteration it does not
+yield the most readable code:
+
+Если привыкание к макросам и займет некоторое время, то оно стоит
+затраченных усилий. Даже в таком простом применении, как итерация,
+макросы могут сделать программы существенно меньше и
+чище. Предположим, что программа должна произвести итерацию с
+некоторым участком кода для x от a до b. Встроенный в Лисп оператор do
+предназначен для более общих случаев. Для простой итерации он не даст
+наиболее читаемый код:
+
+
+(do ((x a (+ 1 x))) ((> x b)) (print x))
+
+(do ((x a (+ 1 x))) ((> x b)) (print x)) History of edits (Latest:
+zoid 1 year, 10 months ago) §
+
+
+Instead, suppose we could just say:
+
+Вместо этого, допустим, мы могли бы сказать всего лишь:
+
+
+(for (x a b) (print x))
+
+(for (x a b) (print x))
+
+
+Macros make this possible. With six lines of code (see page 154) we
+can add for to the language, just as if it had been there from the
+start. And as later chapters will show, writing for is only the
+beginning of what you can do with macros.
+
+Макросы делают это возможным. При помощи шести строчек кода
+(см. стр. 154) мы можем добавить к языку for, как будто бы он там был
+с самого начала. И, как покажут последующие главы, написание for
+только начало того, что вы можете делать с макросами.
+
+
+You’re not limited to extending Lisp one function or macro at a
+time. If you need to, you can build a whole language on top of Lisp,
+and write your programs in that. Lisp is an excellent language for
+writing compilers and interpreters, but it offers another way of
+deﬁning a new language which is often more elegant and certainly much
+less work: to deﬁne the new language as a modiﬁcation of Lisp. Then
+the parts of Lisp which can appear unchanged in the new language
+(e.g. arithmetic or I/O) can be used as is, and you only have to
+implement the parts which are different (e.g. control structure). A
+language implemented in this way is called an embedded language.
+
+Вы не ограничены расширять Лисп за раз только функцией или
+макросом. Если потребуется, вы можете создать целый язык поверх Лисп и
+писать на нем свои программы. Лисп – это превосходный язык для
+написания компиляторов и интерпретаторов, но он предлагает иной способ
+описания нового языка, который зачастую более изящен и, несомненно,
+менее трудоемок – описать новый язык как модификацию Лисп. В таком
+случае части Лисп, которые могут появиться в новом языке без изменений
+(например, арифметика или ввод/вывод), могут быть использованы как
+есть, и вам нужно реализовать компоненты, которые отличаются
+(например, управляющую структуру). Язык, реализованный таким образом,
+называется встраиваемым языком.
+
+
+Embedded languages are a natural outgrowth of bottom-up
+programming. Common Lisp includes several already. The most famous of
+them, CLOS,is discussed in the last chapter. But you can deﬁne
+embedded languages of your own, too. You can have the language which
+suits your program, even if it ends up looking quite different from
+Lisp.
+
+Встраиваемые языки – естественный результат восходящего
+программирования. Коммон Лисп уже включает в себя несколько. Наиболее
+известный из них – CLOS – рассматривается в последней главе. Но вы
+также можете описать и свои собственные встраиваемые языки. Вы можете
+получить язык, который подходит к программе, даже если он станет
+выглядеть совершенно отличным от Лисп.
+
+
+1.5 Why Lisp (or When)
+
+1.5 Почему Lisp (или Когда)
+
+
+These new possibilities do not stem from a single magic ingredient. In
+this respect, Lisp is like an arch. Which of the wedge-shaped stones
+(voussoirs) is the one that holds up the arch? The question itself is
+mistaken; they all do. Like an arch, Lisp is a collection of
+interlocking features. We can list some of these features— dynamic
+storage allocation and garbage collection, runtime typing, functions
+as objects, a built-in parser which generates lists, a compiler which
+accepts programs expressed as lists, an interactive environment, and
+so on—but the power of Lisp cannot be traced to any single one of
+them. It is the combination which makes Lisp programming what it is.
+
+Эти новые возможности не происходят от единственного волшебного
+ингридиента. В этом отношении Lisp как арка. Какой из клинообразных
+камней (voussoirs) является тем, что поддерживает арку? Вопрос неверен
+сам по себе: они все являются. Как и арка, Лисп – это набор
+взаимосвязанных функций. Мы можем перечислить некоторые из этих
+функций: динамическое распределение памяти и сборка мусора,
+динамическая типизация, функции как объекты, встроенный систаксический
+анализатор, генерирующий списки, компилятор, принимающий программы,
+представленные в виде списков, диалоговое окружение, и так далее, но
+ни в одной из них нельзя усмотреть способности Лисп. Это сочетание,
+делающее программирование на Лисп таким, какое есть.  History of edits
+(Latest: zoid 1 year, 8 months ago) §
+
+
+Over the past twenty years, the way people program has changed. Many
+of these changes—interactive environments, dynamic linking, even
+object-oriented programming—have been piecemeal attempts to give other
+languages some of the ﬂexibility of Lisp. The metaphor of the arch
+suggests how well they have succeeded.
+
+На протяжении двадцати последних лет подход к программированию
+изменился. Многие из этих изменений: диалоговые окружения,
+динамическое связывание, даже объектно-ориентированное
+программирование – были частичными попытками передать другим языкам
+немного гибкости Лисп. Метафора арки как бы намекает, насколько хорошо
+они преуспели.
+
+
+It is widely known that Lisp and Fortran are the two oldest languages
+still in use. What is perhaps more signiﬁcant is that they represent
+opposite poles in the philosophy of language design. Fortran was
+invented as a step up from assembly language. Lisp was invented as a
+language for expressing algorithms. Such different intentions yielded
+vastly different languages. Fortran makes life easy for the compiler
+writer; Lisp makes life easy for the programmer. Most programming
+languages since have fallen somewhere between the two poles. Fortran
+and Lisp have themselves moved closer to the center. Fortran now looks
+more like Algol, and Lisp has given up some of the wasteful habits of
+its youth.
+
+Широко известно, что Лисп и Фортран – два, пока еще используемых,
+старейших языка. Что, наверное, наиболее важно, так это то, что они
+представляют противоположные стороны философии дизайна языков
+программирования. Фортран был изобретен как расширение
+ассемблера. Лисп был изобретен как язык для выражения
+алгоритмов. Такие разные стремления привели к совершенно разным
+языкам. Фортран облегчает жизнь автору компилятора, Лисп облегчает
+жизнь программиста. Большинство языков программирования впоследствии
+распределились где-то между двумя полюсами. Фортран и Лисп
+переместились ближе к центру. Фортран сейчас выглядит больше, как
+Алгол, а Лисп лишился некоторых скверных привычек своей юности.
+
+The original Fortran and Lisp deﬁned a sort of battleﬁeld. On one side
+the battle cry is “Efﬁciency! (And besides, it would be too hard to
+implement.)” On the other side, the battle cry is “Abstraction! (And
+anyway, this isn’t production software.)” As the gods determined from
+afar the outcomes of battles among the ancient Greeks, the outcome of
+this battle is being determined by hardware. Every year, things look
+better for Lisp. The arguments against Lisp are now starting to sound
+very much like the arguments that assembly language programmers gave
+against high-level languages in the early 1970s. The question is now
+becoming not Why Lisp?,but When?
+
+
+Изначально Фортран и Лисп характеризовались как, своего рода, два
+враждующих лагеря. В одном из них кричали: “Эффективность!” (За
+исключением того, что было бы слишком трудно реализовать). В другом
+лагере кричали: “Абстракция!” (В любом случае это непромышленное
+ПО). И боги определили из далеких исходов древнегреческих баталий, что
+исход этой битвы будет определен аппаратным обеспечением. С каждым
+годом обстоятельства складываются лучше для Лисп. Аргументы против
+Лисп сейчас стали звучать очень похоже на аргументы программистов на
+ассемблере, направленные против высокоуровневых языков в середине
+1970-х. Вопрос, который сейчас ставится, в том не “Почему Лисп?”, а
+“Когда?”.
