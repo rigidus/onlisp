@@ -1,0 +1,519 @@
+3.1 Functional Design
+
+3.1 Функциональное проектирование
+
+
+
+The character of an object is influenced by the elements from which it
+is made. A wooden building looks different from a stone one, for
+example. Even when you are too far away to see wood or stone, you can
+tell from the overall shape of the building what it’s made of. The
+character of Lisp functions has a similar influence on the structure
+of Lisp programs.
+
+
+На свойства объекта влияют элементы, из которых он создан. Например,
+деревянное здание на вид отличается от каменного. Даже находясь от
+него на далеком расстоянии и не имея возможности отличить на взгляд
+камень от дерева, вы сможете определить материал, из которого оно
+выстроено, исходя из общей формы этого здания. Особенности функций
+Lisp оказывают аналогичное влияние на структуру Lisp программ.
+
+
+
+Functional programming means writing programs which work by returning
+values instead of by performing side-effects. Side-effects include
+destructive changes to objects (e.g. by rplaca) and assignments to
+variables (e.g. by setq). If side-effects are few and localized,
+programs become easier to read, test, and debug. Lisp programs have
+not always been written in this style, but over time Lisp and
+functional programming have gradually become inseparable.
+
+
+Функциональное программирование означает написание программ, которые
+работают за счет возврата значений, а не за счет побочных
+действий. Побочные действия включают в себя деструктивные изменения
+объектов (напр. rplaca) и присвоения переменным (напр. setq). Если
+побочные действия немногочисленны и локализованы, то программы
+становится легче читать, тестировать и отлаживать. Lisp-программисты
+не всегда писали в таком стиле, но со временем Lisp и функциональное
+программирование постепенно стали неразделимы.
+
+
+— предложите перевод для side effects — zoid
+
+An example will show how functional programming differs from what you
+might do in another language. Suppose for some reason we want the
+elements of
+
+
+Пример покажет, как функциональное программирование отличается от
+того, что можно делать при помощи другого языка. Допустим, нам нужно с
+какой-то целью
+
+
+
+(defun bad-reverse (lst)
+(let* ((len (length lst))
+       (ilimit (truncate (/ len 2))))
+   (do ((i 0 (1+ i))
+        (j (1- len) (1- j)))
+     ((>= i ilimit))
+   (rotatef (nth i lst) (nth j lst)))))
+
+Figure 3.1: A function to reverse lists.
+
+Рис. 3.1. Функция, инвертирующая списки.
+
+
+
+a list in the reverse order. Instead of writing a function to reverse
+lists, we write a function which takes a list, and returns a list with
+the same elements in the reverse order.
+
+
+изменить порядок элементов списка. Вместо написания функции,
+инвертирующей списки, мы напишем функцию, которая принимает список, а
+возвращает список с теми же элементами в обратном порядке.
+
+
+Figure 3.1 contains a function to reverse lists. It treats the list as
+an array, reversing it in place; its return value is irrelevant:
+
+
+На рисунке 3.1 представлена функция, инвертирующая списки. Она
+обрабатывает списки как массивы, сразу переворачивая их; ее
+возвращаемое значение неважно:
+
+
+
+> (setq lst ’(a b c))
+=> (A B C)
+> (bad-reverse lst)
+=> NIL
+> lst
+=> (C B A)
+
+
+
+As its name suggests, bad-reverse is far from good Lisp
+style. Moreover, its ugliness is contagious: because it works by
+side-effects, it will also drawits callers away from the functional
+ideal.
+
+
+Ее имя подсказывает, что bad-reverse далека от хорошего
+Lisp-стиля. Кроме того, ее уродство заразно: так как она работает при
+помощи побочных действий, то также уводит в сторону от функционального
+идеала вызвавшие ее функции.
+
+
+
+Though cast in the role of the villain, bad-reverse does have one
+merit: it shows the Common Lisp idiom for swapping two values. The
+rotatef macro rotates the values of any number of generalized
+variables—that is, expressions you could give as the first argument to
+setf. When applied to just two arguments, the effect is to swap them.
+
+
+Хотя, выступая в роли злодея, у bad-reverse есть одно достоинство: она
+демонстрирует идиому Common Lisp для перестановки двух
+значений. Макрос rotatef переворачивает значения любого числа
+обобщенных переменных, то есть выражения, которые можно передать setf
+в качестве первого аргумента. Результатом применения непосредственно к
+двум аргументам будет их перестановка.
+
+
+
+In contrast, Figure 3.2 shows a function which returns reversed
+lists. With good-reverse,we get the reversed list as the return value;
+the original list is not touched.
+
+
+С другой стороны, на рисунке 3.2 показана функция, возвращающая
+инвертированные списки. С помощью good-reverse мы получаем
+инвертированный список в качестве возвращаемого значения; исходный
+список остается прежним.
+
+
+
+> (setq lst ’(a b c))
+=> (A B C)
+
+> (good-reverse lst)
+=> (C B A)
+
+> lst
+=> (A B C)
+
+
+(defun good-reverse (lst)
+  (labels ((rev (lst acc) (if (null lst)
+                              acc
+                              (rev (cdr lst) (cons (car lst) acc)))))
+     (rev lst nil)))
+
+
+Figure 3.2: A function to return reversed lists.
+
+Рисунок 3.2. Функция, возвращающая инвертированные списки.
+
+
+
+It used to be thought that you could judge someone’s character by
+looking at the shape of his head. Whether or not this is true of
+people, it is generally true of Lisp programs. Functional programs
+have a different shape from imperative ones. The structure in a
+functional program comes entirely from the composition of arguments
+within expressions, and since arguments are indented, functional code
+will show more variation in indentation. Functional code looks fluid
+1) on the page; imperative code looks solid and blockish, like Basic.
+
+
+Раньше считалось, что можно судить о чьем-то характере, глядя на форму
+его головы. Относится ли это в самом деле к людям или нет, но как
+правило, применимо к Lisp-программам. Внешний вид функциональных
+программ отличается от внешнего вида императивных. Структурно
+функциональная программа -- это всегда композия аргументов внутри
+выражений, а так как аргументы можно индентировать, то функциональный
+код оказывается более разнообразным в плане индентации. Функциональный
+код выглядит гибким 1), а императивный код выглядит сплошным и
+блочным, как Basic.
+
+
+
+— Предложите лучший перевод indentation. — zoid
+
+1)For a characteristic example, see page 242.
+
+
+1) Типичный пример приведен на странице 242.
+
+
+
+Even from a distance, the shapes of bad- and good-reverse suggest
+which is the better program. And despite being shorter, good-reverse
+is also more efficient: O(n) instead of O(n2).
+
+
+Мы видим, не вдаваясь в детали, исходя из внешнего вида bad- и
+good-reverse, какая из программ лучше. Несмотря на то, что
+good-reverse короче и также более эффективна: O(n) вместо O(n^2).
+
+
+
+We are spared the trouble of writing reverse because Common Lisp has
+it built-in. It is worth looking briefly at this function, because it
+is one that often brings to the surface misconceptions about
+functional programming. Like good-reverse, the built-in reverseworks
+by returning a value—it doesn’t touch its arguments. But people
+learning Lisp may assume that, like bad-reverse, it
+
+
+Мы избежали проблемы написания reverse, поскольку Common Lisp имеет
+встроенную. Имеет смысл ненадолго взглянуть на эту функцию, потому что
+она часто выявляет неправильные представления о функциональном
+программировании. Как и good-reverse, встроенная reverse возвращает
+значение, не изменяя аргументов. Но изучающие Lisp могут подумать, что
+она, как и bad-reverse,
+
+
+works by side-effects. If in some part of a program they want a list
+lst to be reversed, they may write
+
+
+работает за счет побочных действий. Если в какой-либо части программы
+потребуется инвертировать список, можно написать
+
+
+
+(reverse lst)
+
+
+
+and wonder why the call seems to have no effect. In fact, if we want
+effects from such a function, we have to see to it ourselves in the
+calling code. That is, we need to write
+
+
+но к удивлению это не сработает. В действительности, если нам нужны
+действия от такой функции, то придется сделать это самим в вызывающем
+коде. Вот, что вместо этого необходимо написать:
+
+
+
+(setq lst (reverse lst))
+
+
+
+instead. Operators like reverse are intended to be called for return
+values, not side-effects. It is worth writing your own programs in
+this style too—not only for its inherent benefits, but because, if you
+don’t, you will be working against the language.
+
+
+Такие операторы, как reverse, предназначены для вызова с целью
+получения значений, а не побочных действий. Писать собственные
+программы в таком стиле стоит не только из-за обязательно присущих ему
+преимуществ, но и потому, что если этого не делать, вы будете работать
+против языка.
+
+
+
+One of the points we ignored in the comparison of bad- and
+good-reverse is that bad-reverse doesn’t cons. Instead of building new
+list structure, it operates on the original list. This can be
+dangerous—the list could be needed elsewhere in the program—but for
+efficiency it is sometimes necessary. For such cases, Common Lisp
+provides an O(n) destructive reversing function called nreverse.
+
+
+Сравнивая bad- и good-reverse, мы не придали значения одной из
+особенностей, заключающейся в том, что bad-reverse не синтезирует
+целое из частей. Вместо создания новой структуры списка, она работает
+с исходным списком. Это может быть опасно: список может потребоваться
+где-либо еще в программе, но иногда бывает необходимо ради
+производительности. Для таких случаев Common Lisp предоставляет O(n)
+деструктивную инвертирующую функцию, которая называется nreverse.
+
+
+
+A destructive function is one that can alter the arguments passed to
+it. However, even destructive functions usually work by returning
+values: you have to assume that nreverse will recycle lists you give
+to it as arguments, but you still can’t assume that it will reverse
+them. As before, the reversed list has to be found in the return
+value. You still can’t write
+
+
+Деструктивной является та функция, которая может изменять передаваемые
+ей аргументы. Тем не менее даже деструктивные функции работают при
+помощи возвращаемых значений: вы должны считать, что nreverse
+переработает списки, переданные ей в качестве аргументов, но
+по-прежнему нельзя полагаться на то, что она их инвертирует. Как и
+раньше, инвертированный список будет содержаться в возвращаемом
+значении. Вы не можете написать
+
+
+
+(nreverse lst)
+
+
+
+in the middle of a function and assume that afterwards lst will be
+reversed. This is what happens in most implementations:
+
+
+в середине функции, полагая, что после этого lst будет
+инвертирован. Вот, что происходит в большинстве реализаций:
+
+
+
+> (setq lst ’(a b c))
+=> (A B C)
+
+> (nreverse lst)
+=>(C B A)
+
+> lst
+=> (A)
+
+
+To reverse lst, you have would have to set lst to the return value, as
+with plain reverse.
+
+
+Для инвертирования lst можно было бы присвоить lst возвращаемое
+значение, как в случае с обычным reverse.
+
+
+
+If a function is advertised as destructive, that doesn’t mean that
+it’s meant to be called for side-effects. The danger is, some
+destructive functions give the impression that they are. For example,
+
+
+Если функция обозначена как деструктивная, то это вовсе не означает,
+что ее предполагалось вызывать для побочных действий. FIXME Опасность
+в том, что некоторые деструктивные функции создают впечатление
+таковых. Например,
+
+(nconc x y)
+
+
+almost always has the same effect as
+
+почти всегда производит те же действия, что и
+
+
+(setq x (nconc x y))
+
+
+
+If you wrote code which relied on the former idiom, it might seem to
+work for some time. However, it wouldn’t do what you expected when x
+was nil.
+
+
+Если вы написали код, зависящий от приведенной выше конструкции, то
+он, вероятно, может работать некоторое время. Однако он не будет
+делать то, что вы ожидали, когда x равно nil.
+
+
+Only a few Lisp operators are intended to be called for
+side-effects. In general, the built-in operators are meant to be
+called for their return values. Don’t be misled by names like sort,
+remove, or substitute. If you want side-effects, use setq on the
+return value.
+
+
+Лишь несколько операторов Lisp предназначены для вызова с целью
+получения побочных действий. Вообще, встроенные операторы задумывались
+для вызова ради возращаемых ими значений. Такие названия, как sort,
+remove или substitute, не должны вводить в заблуждение. Если вам нужны
+побочные действия, применяйте setq к возвращаемому значению.
+
+
+
+This very rule suggests that some side-effects are inevitable. Having
+functional programming as an ideal doesn’t imply that programs should
+never have sideeffects. It just means that they should have no more
+than necessary.
+
+
+Это самое правило предполагает, что побочные действия
+неизбежны. Придерживаться функционального программирования как идеала,
+не означает того, что программы никогда не должны осуществлять
+побочных действий. Это означает, что они должны, но не более, чем это
+необходимо.
+
+
+
+It may take time to develop this habit. One way to start is to treat
+the following operators as if there were a tax on their use:
+
+
+Чтобы развить такую привычку, возможно, потребуется время. Один из
+способов состоит в том, чтобы использовать следующие операторы так,
+как если бы был налог на их использование:
+
+
+
+set setq setf psetf psetq incf decf push pop pushnew
+
+
+set setq setf psetf psetq incf decf push pop pushnew
+
+
+
+
+rplaca rplacd rotatef shiftf remf remprop remhash
+
+
+rplaca rplacd rotatef shiftf remf remprop remhash
+
+
+
+and also let*, in which imperative programs often lie
+concealed. Treating these operators as taxable is only proposed as a
+help toward, not a criterion for, good Lisp style. However, this alone
+can get you surprisingly far.
+
+
+и также let*, в которых нередко скрываются императивные
+программы. Применение этих операторов, как облагаемых налогом, лишь
+помогает приблизиться к хорошему Lisp-стилю, а не служит для него
+критерием. Тем не менее, лишь одно это позволит вам удивительно далеко
+зайти.
+
+
+
+In other languages, one of the most common causes of side-effects is
+the need for a function to return multiple values. If functions can
+only return one value, they have to “return” the rest by altering
+their parameters. Fortunately, this isn’t necessary in Common Lisp,
+because any function can return multiple values.
+
+
+В других языках одной из наиболее частых причин возникновения побочных
+действий является необходимость возврата функцией нескольких
+значений. Если функции способны вернуть лишь одно значение, то они
+должны <<вернуть>> оставшиеся путем изменения собственных
+параметров. К счастью, это не требуется в Common Lisp, так как любая
+функция может вернуть несколько значений.
+
+
+
+The built-in function truncate returns two values, for example—the
+truncated integer, and what was cut off in order to create it. A
+typical implementation will print both when truncate is called at the
+toplevel:
+
+
+Встроенная функция truncate возвращает два значения, например,
+округленное целое и то, что было отрезано с целью его
+создания. Типичная реализация напечатает оба, когда truncate
+вызывается из верхнего уровня:
+
+
+
+> (truncate 26.21875)
+=> 26
+=> 0.21875
+
+When the calling code only wants one value, the first one is used:
+
+Когда вызывающий код требует одно значение, будет использовано первое:
+
+> (= (truncate 26.21875) 26)
+=> T
+
+
+The calling code can catch both return values by using a
+multiple-value-bind. This operator takes a list of variables, a call,
+and a body of code. The body is evaluated with the variables bound to
+the respective return values from the call:
+
+
+Вызывающий код может получить оба возвращаемых значения при помощи
+multiple-value-bind. Этот оператор принимает список переменных, вызов,
+а также программный код. Код выполняется с привязкой переменных к
+соответствующим возвращаемым вызовом значениям:
+
+
+
+— FIXME — zoid
+
+> (multiple-value-bind (int frac)
+       (truncate 26.21875)
+    (list int frac))
+=> (26 0.21875)
+
+Finally, to return multiple values, we use the values operator:
+
+Наконец, чтобы возвращать несколько значений, мы используем оператор
+values:
+
+> (defun powers (x)
+    (values x (sqrt x) (expt x 2)))
+=> POWERS
+
+> (multiple-value-bind (base root square)
+      (powers 4)
+    (list base root square))
+=> (4 2.0 16)
+
+
+Functional programmingis a good idea in general. It is a particularly
+good idea in Lisp, because Lisp has evolved to support it. Built-in
+operators like reverse and nreverse are meant to be used in this
+way. Other operators, like values and multiple-value-bind, have been
+provided specifically to make functional programming easier.
+
+
+Вообще, функциональное программирование -- хорошая идея. И особенно
+хорошая в Lisp, так как Lisp развивался для того, чтобы его
+поддерживать. FIXME Встроенные операторы, такие как reverse и
+nreverse, предполагается использовать в таком ключе. Другие операторы,
+как values и multiple-value-bind, были разработаны как раз для того,
+чтобы сделать функциональное программирование легче.

@@ -1,0 +1,193 @@
+3.4 Interactive Programming
+
+3.4 Интерактивное программирование
+
+
+The previous sections presented the functional style as a good way of
+organizing programs. But it is more than this. Lisp programmers did
+not adopt the functional style purely for aesthetic reasons. They use
+it because it makes their work easier. In Lisp's dynamic environment,
+functional programs can be written with unusual speed, and at the same
+time, can be unusually reliable.
+
+
+Предыдущие разделы представляли функциональное программирование как
+хороший способ организации программ. Но это нечто
+большее. Lisp-программисты приняли функциональный стиль не только из
+эстетических соображений. Они используют его потому, что он облегчает
+им работу. В динамическом окружении Lisp функциональные программы
+могут быть написаны с необыкновенной быстротой и в то же время
+необычайно надежны.
+
+
+In Lisp it is comparatively easy to debug programs. A lot of
+information is available at runtime, which helps in tracing the causes
+of errors. But even more important is the ease with which you can test
+programs. You don't have to compile a program and test the whole thing
+at once. You can test functions individually by calling them from the
+toplevel loop.
+
+
+В Lisp относительно легко отлаживать программы. Очень много
+информации, помогающей найти причины возникновения ошибок, можно
+получить во время выполнения. Но еще более важным является легкость, с
+которой вы можете тестировать программы. Нет необходимости
+компилировать программу и тестировать все целиком за один раз. Вы
+можете протестировать функции по отдельности, вызывая их из цикла
+toplevel.
+
+
+
+Incremental testing is so valuable that Lisp style has evolved to take
+advantage of it. Programs written in the functional style can be
+understood one function at a time, and from the point of view of the
+reader this is its main advantage. However, the functional style is
+also perfectly adapted to incremental testing: programs written in
+this style can also be tested one function at a time. When a function
+neither examines nor alters external state, any bugs will appear
+immediately. Such a function can affect the outside world only through
+its return values. Insofar as these are what you expected, you can
+trust the code which produced them.
+
+
+Инкрементное тестирование настолько значимо, что для того, чтобы
+получить выигрыш от его использоывания, Lisp стиль
+эволюционировал. Программы, написанные в функциональном стиле, можно
+воспринимать по одной функции за раз, и с точки зрения читающего, это
+и есть его главное достоинство. Тем не менее, функциональный стиль
+прекрасно приспособлен к инкрементному тестированию: программы,
+написанные в этом стиле, можно также протестировать по одной функции
+за раз. Когда функция не анализирует и не изменяет внешнего состояния,
+любые ошибки немедленно проявятся. Такая функция может влиять на
+внешний мир только через свои возвращаемые значения. В тех же
+пределах, в каких вы полагаетесь на эти значения, вы можете доверять
+вернувшему их коду.
+
+
+
+Experienced Lisp programmers actually design their programs to be easy
+to test:
+
+
+Опытные Lisp-программисты фактически делают свои программы удобными
+для тестирования:
+
+
+
+1. They try to segregate side-effects in a few functions, allowing the
+greater part of the program to be written in a purely functional
+style.
+
+
+1. Они пытаются отделить побочные действия в несколько функций,
+позволяющих большей части программы быть написанной в чисто
+функциональном стиле.
+
+
+
+2. If a function must perform side-effects, they try at least to give
+it a functional interface.
+
+
+2. Если функция должна осуществлять побочные действия, они по крайней
+мере пытаются дать ей функциональный интерфейс.
+
+
+
+3. They give each function a single, well-defined purpose.
+
+
+3. Они дают каждой функции единственную, четко определенную цель.
+
+
+
+When a function is written, they can test it on a selection of
+representative cases, then move on to the next one. If each brick does
+what it's supposed to do, the wall will stand.
+
+
+Когда функция написана, они могут проверить ее на выборке из типичных
+случаев, а затем перейти к следующей. Если каждый кирпич делает то же,
+что и предполагалось делать, то стена будет стоять.
+
+
+
+In Lisp, the wall can be better-designed as well. Imagine the kind of
+conversation you would have with someone so far away that there was a
+transmission delay of one minute. Now imagine speaking to someone in
+the next room. You wouldn't just have the same conversation faster,
+you would have a different kind of conversation. In Lisp, developing
+software is like speaking face-to-face. You can test code as you're
+writing it. And instant turnaround has just as dramatic an effect on
+development as it does on conversation. You don't just write the same
+program faster; you write a different kind of program.
+
+
+С таким же успехом в Lisp стену можно спроектировать лучшим
+образом. Представьте себе, что если бы вы разговаривали с кем-то,
+находящимся настолько далеко, что задержки передачи составляли бы одну
+минуту. Теперь представьте разговор с кем-то, находящимся в соседней
+комнате. Это бы не сделало прежний разговор быстрее, это был бы другой
+вид разговора. В Lisp разработка программ похожа на разговор лицом к
+лицу. Можно проверять код по мере его написания. И стоит вам
+отвернуться, и это возымеет такие же резкие последствия на разработку,
+какие оказало бы на беседу. FIXME Вы не просто пишете ту же программу
+быстрее, вы пишете программу иного вида.
+
+
+How so? When testing is quicker you can do it more often. In Lisp, as
+in any language, development is a cycle of writing and testing. But in
+Lisp the cycle is very short: single functions, or even parts of
+functions. And if you test everything as you write it, you will know
+where to look when errors occur: in what you wrote last. Simple as it
+sounds, this principle is to a large extent what makes bottom-up
+programming feasible. It brings an extra degree of confidence which
+enables Lisp programmers to break free, at least part of the time,
+from the old plan-and-implement style of software development.
+
+
+Как так? Когда тестирование быстрее, его можно делать чаще. В Lisp,
+как и в любом языке, разработка - это цикл написания и
+тестирования. Но в Lisp этот цикл очень короткий: одиночная функция
+или части функций. А если проверять все по мере написания, то в случае
+возникновения ошибки, вы будете знать, где искать: в конце
+написанного. Как бы просто это ни выглядело, но именно этот принцип, в
+большей степени, позволяет программированию снизу-вверх быть
+возможным. Это приносит дополнительную степень уверенности,
+позволяющую Lisp-программистам свободно отдыхать, по крайней мере
+часть времени, от старого стиля разработки программного обеспечения
+<<спланируй и реализуй>>.
+
+
+
+Section 1.1 stressed that bottom-up design is an evolutionary
+process. You build up a language as you write a program in it. This
+approach can work only if you trust the lower levels of code. If you
+really want to use this layer as a language, you have to be able to
+assume, as you would with any language, that any bugs you encounter
+are bugs in your application and not in the language itself.
+
+
+В раздел 1.1 отмечено, что проектирование снизу-вверх -- эволюционный
+процесс. Вы создаете язык по мере написания на нем программы. Такой
+подход может работать, только если вы доверяете нижним слоям
+кода. Если вы действительно хотите использовать этот слой как язык, то
+вы должны уметь допускать, как и в случае с любым языком, что любые
+обнаруженные ошибки -- это ошибки приложения, а не самого языка.
+
+
+
+So your new abstractions are supposed to bear this heavy burden of
+responsibility, and yet you're supposed to just spin them off as the
+need arises? Just so; in Lisp you can have both. When you write
+programs in a functional style and test them incrementally, you can
+have the flexibility of doing things on the spur of the moment, plus
+the kind of reliability one usually associates with careful planning.
+
+
+Итак, ваши новые абстракции должны нести это тяжелое бремя
+ответственности, и все же вы собираетесь создавать на их основе новые?
+Именно так, в Lisp это возможно одновременно. Когда вы пишете
+программы в функциональном стиле и инкрементно тестируете их, можно
+получить гибкость создания вещей под влиянием момента вдобавок к
+некоторой надежности, обычно ассоциируемой с тщательным планированием.

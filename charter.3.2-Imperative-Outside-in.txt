@@ -1,0 +1,233 @@
+3.2 Imperative Outside-In
+
+3.2 Императивное программирование наизнанку
+
+
+The aims of functional programming may show more clearly when
+contrasted with those of the more common approach, imperative
+programming. A functional program tells you what it wants; an
+imperative program tells you what to do. A functional program says
+“Return a list of a and the square of the first element of x:”
+
+
+Возможно, цели функционального программирования станут более понятными
+в процессе сравнения с другим, более распространенным подходом --
+императивным программированием. Функциональная программа говорит вам
+то, что она хочет; императивная же говорит вам, что
+делать. Функциональная программа говорит: <<Вернуть список, состоящий
+из a и квадрата первого элемента x>>:
+
+
+
+(defun fun (x)
+  (list 'a (expt (car x) 2)))
+
+
+
+An imperative programs says “Get the first element of x, then square
+it, then return a list of a and the square:”
+
+
+Императивная программа говорит: <<Взять первый элемент x, затем
+возвести его в квадрат, затем вернуть список, состоящий из a и
+квадрата>>:
+
+
+
+(defun imp (x)
+  (let (y sqr)
+    (setq y (car x))
+    (setq sqr (expt y 2))
+    (list 'a sqr)))
+
+
+
+Lisp users are fortunate in being able to write this program both
+ways. Some languages are only suited to imperative programming—notably
+Basic, along with most machine languages. In fact, the definition of
+imp is similar in form to the machine language code that most Lisp
+compilers would generate for fun.
+
+
+Пользователям Lisp повезло в том, что они могут написать эту программу
+любым из двух способов. Некоторые языки приспособлены только для
+императивного программирования, среди большинства языков
+программирования особенно выделяется Basic. В действительности,
+определение imp по внешнему виду напоминает машинный код, который
+большинство компиляторов генерируют, вероятно, ради забавы.
+
+
+
+Why write such code when the compiler could do it for you? For many
+programmers, this question does not even arise. A language stamps its
+pattern on our thoughts: someone used to programming in an imperative
+language may have begun to conceive of programs in imperative terms,
+and may actually find it easier to write imperative programs than
+functional ones. This habit of mind is worth overcoming if you have a
+language that will let you.
+
+
+Зачем писать такой код, который может сделать за вас компилятор? Для
+многих программистов этот вопрос даже никогда не встает. Язык
+накладывает шаблон на наши мысли: кто-то, кто привык программировать
+на императивном языке, скорее всего, начнет планировать программу в
+императивных выражениях и наверняка обнаружит, что написание
+императивных программ легче, чем функциональных. Имеет смысл
+перешагнуть через этот стереотип, если у вас есть язык, позволяющий
+это сделать.
+
+
+
+For alumni of other languages, beginning to use Lisp may be like
+stepping onto a skating rink for the first time. It's actually much
+easier to get around on ice than it is on dry land—if you use
+skates. Till then you will be left wondering what people see in this
+sport.
+
+
+Те, кто изучил другие языки, начав использовать лисп, будут походить
+на ступивших в первый раз на каток. Вообще-то, если использовать
+коньки, то намного легче выйти на лед, чем на землю. До тех пор вам
+останется лишь гадать о том, что люди видят в этом спорте.
+
+
+What skates are to ice, functional programming is to Lisp. Together
+the two allow you to travel more gracefully, with less effort. But if
+you are accustomed to another mode of travel, this may not be your
+experience at first. One of the obstacles to learning Lisp as a second
+language is learning to program in a functional style.
+
+
+Функциональное программирование означает для Lisp то же, что и коньки
+для льда. Вместе они позволят передвигаться более изящно и с меньшими
+усилиями. Но если вам привычен иной способ перемещения, то этот не
+будет вашим первым опытом. Одно из препятствий к изучению Lisp в
+качестве второго языка заключается в том, чтобы научиться
+программировать в функциональном стиле.
+
+
+
+Fortunately there is a trick for transforming imperative programs into
+functional ones. You can begin by applying this trick to finished
+code. Soon you will begin to anticipate yourself, and transform your
+code as you write it. Soon after that, you will begin to conceive of
+programs in functional terms from the start.
+
+
+К счастью, есть хитрость, позволяющая преобразовать императивные
+программы в функциональные. Можно начать с применения этой хитрости к
+законченному коду. Вскоре вы начнете себя предвосхищать и
+преобразовывать код по мере его написания. Вслед за этим, вы начнете
+думать о программах в функциональном плане с самого начала.
+
+
+
+The trick is to realize that an imperative program is a functional
+program turned inside-out. To find the functional program implicit in
+our imperative one, we just turn it outside-in. Let's try this
+technique on imp.
+
+
+Хитрость заключается в том, чтобы понять, что императивная программа
+представляет собой вывернутую на изнанку функциональную. Чтобы
+отыскать запрятанную функциональную программу, мы просто вывернем ее
+еще раз. Давайте попробуем этот метод на imp.
+
+
+
+— Придумайте хороший перевод для outside-in. — zoid
+
+The first thing we notice is the creation of y and sqr in the initial
+let. This is a sign that bad things are to follow. Like eval at
+runtime, uninitialized variables are so rarely needed that they should
+generally be treated as a symptom of some illness in the program. Such
+variables are often used like pins which hold the program down and
+keep it from coiling into its natural shape.
+
+
+Первое, что мы замечаем -- это создание y и sqr в начальном let. Это
+признак того, что плохие вещи впереди. Как eval во время выполнения,
+неинициализированные переменные необходимы настолько редко, что они в
+большинстве случаев должны рассматриваться как симптом некоторых
+заболеваний программы. Такие переменные часто используются как
+булавки, удерживающие программу от скручивания в естественную форму.
+
+
+
+However, we ignore them for the time being, and go straight to the end
+of the function. What occurs last in an imperative program occurs
+outermost in a functional one. So our first step is to grab the final
+call to list and begin stuffing the rest of the program inside it—just
+like turning a shirt inside-out. We continue by applying the same
+transformation repeatedly, just as we would with the sleeves of the
+shirt, and in turn with their cuffs.
+
+
+Несмотря на это, мы на время оставим их в покое и перейдем прямо в
+конец функции. То, что в императивной программе происходит последним,
+в функциональной вначале. Таким образом, наш первый шаг -- захватить
+последний вызов в список и начать набивать туда оставшуюся часть
+программы в точности, как и выворачивание рубашки наизнанку. Мы
+продолжим многократно применять такое же преобразование так же, как
+поступили бы с рукавами рубашки, а затем и с манжетами.
+
+
+
+— outermost -- ? — zoid
+
+Starting at the end, we replace sqr with (expt y 2), yielding:
+
+
+Начиная с конца, мы переместим sqr вместе с (expt y 2):
+
+
+
+(list 'a (expt y 2)))
+
+
+Then we replace y by (car x):
+
+Затем заменим y на (car x):
+
+
+
+(list 'a (expt (car x) 2))
+
+
+
+Now we can throw away the rest of the code, having stuffed it all into
+the last expression. In the process we removed the need for the
+variables y and sqr, so we can discard the let as well.
+
+
+Теперь мы можем выкинуть оставшийся код, который полностью вошел в
+последнее выражение. В ходе этого процесса мы убрали необходимость в
+переменных y и sqr, так что мы можем также избавиться и от let.
+
+
+The final result is shorter than what we began with, and easier to
+understand. In the original code, we're faced with the final
+expression (list 'a sqr), and it's not immediately clear where the
+value of sqr comes from. Now the source of the return value is laid
+out for us like a road map.
+
+
+Окончательный результат короче, чем тот, с которого мы начинали, и
+легче для понимания. В исходном коде мы столкнулись с последним
+выражением (list 'a sqr), но не сразу понятно, откуда берется значение
+sqr. Теперь источник возвращаемого значения открыт нашему взору, как
+дорожная карта.
+
+
+
+The example in this section was a short one, but the technique scales
+up. Indeed, it becomes more valuable as it is applied to larger
+functions. Even functions which perform side-effects can be cleaned up
+in the portions which don't.
+
+
+Пример в этом разделе был коротким, но технология масштабируется. В
+самом деле, она становится более ценной, если применяется к функциям
+большего размера. Даже функции, осуществляющие побочные действия,
+можно разобрать на части, которые не будут этого делать.
+

@@ -1,0 +1,38 @@
+On Lisp - Chapter 3
+
+На Lisp - Глава 3
+
+
+Functional Programming
+
+Функциональное программирование
+
+
+
+The previous chapter explained how Lisp and Lisp programs are both
+built out of a single raw material: the function. Like any building
+material, its qualities influence both the kinds of things we build,
+and the way we build them.
+
+
+В предыдущей главе рассказывалось о том, что Lisp и программы на нем
+созданы из единственного материала: функций. Как и любому
+строительному материалу, им присуще оказывать влияние как и на
+свойства того, что мы создаем, так и на способ создания.
+
+
+
+This chapter describes the kind of construction methods which prevail
+in the Lisp world. The sophistication of these methods allows us to
+attempt more ambitious kinds of programs. The next chapter will
+describe one particularly important class of programs which become
+possible in Lisp: programs which evolve instead of being developed by
+the old plan-and-implement method.
+
+
+Эта глава описывает методы разработки, преобладающие в мире
+Lisp. Изощренность этих методов позволит нам попытаться писать более
+сложные программы. В следующей главе будет рассмотрен особенно важный
+класс программ, который становится возможно реализовать в Лисп:
+программы, которые эволюционируют вместо того, чтобы разрабатываться
+старым способом <<спланируй и реализуй>>.

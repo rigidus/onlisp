@@ -1,0 +1,343 @@
+3.3 Functional Interfaces
+
+3.3 Функциональные интерфейсы
+
+
+
+Some side-effects are worse than others. For example, though this
+function calls nconc
+
+
+Некоторые побочные действия хуже, чем другие. Например, хотя эта
+функция вызывает nconc
+
+
+
+(defun qualify (expr)
+  (nconc (copy-list expr) (list 'maybe)))
+
+
+
+it preserves referential transparency.2) If you call it with a given
+argument, it will always return the same (equal) value. From the
+caller's point of view, qualify might as well be purely functional
+code. We can't say the same for bad-reverse (page 29), which actually
+modifies its argument.
+
+
+она оставляет прозрачность ссылок. 2) Если вы вызовете ее с заданным
+аргументом, то она всегда будет возвращать такое же (равное)
+значение. С точки зрения вызывающего, qualify также может считаться
+чисто функциональным кодом. Но нельзя сказать того же о bad-reverse
+(стр. 29), которая фактически модифицирует свои аргументы.
+
+
+
+2) A definition of referential transparency appears on page 198.
+
+
+2) Определение прозрачности ссылок приводится на странице 198.
+
+
+
+Instead of treating all side-effects as equally bad, it would be
+helpful if we had some way of distinguishing between such
+cases. Informally,we could say that it's harmless for a function to
+modify something that no one else owns. For example, the nconc in
+qualify is harmless because the list given as the first argument is
+freshly consed. No one else could own it.
+
+
+Вместо того, чтобы рассматривать побочные действия как одинаково
+плохие, было бы полезно, если бы мы каким-то образом могли находить
+различия между такими случаями. Неформально можно сказать, что для
+функции безвредно модифицировать что-то, чем никто не
+владеет. Например, nconc в qualify является безвредной потому, что
+список, переданный в качестве первого аргумента, только что
+синтезирован (consed). Больше никто не мог быть его владельцем.
+
+
+
+In the general case, we have to talk about ownership not by functions,
+but by invocations of functions. Though no one else owns the variable
+x here,
+
+
+В общем случае, следует говорить не о том, чем владеют сами функции, а
+о том, чем владеют вызовы функций. Хотя здесь никто не владеет
+переменной x,
+
+
+
+(let ((x 0))
+  (defun total (y)
+    (incf x y)))
+
+
+
+the effects of one call will be visible in succeeding ones. So the
+rule should be: a given invocation can safely modify what it uniquely
+owns.
+
+
+эффекты одного вызова будут видны в последующих. Поэтому правило
+должно быть таким: данный вызов может безопасно изменять лишь то, чем
+владеет только он.
+
+
+
+Who owns arguments and return values? The convention in Lisp seems to
+be that an invocation owns objects it receives as return values, but
+not objects passed to it as arguments. Functions that modify their
+arguments are distinguished by the label “destructive,” but there is
+no special name for functions that modify objects returned to them.
+
+
+Кто владеет аргументами и возвращаемыми значениями? По соглашению в
+Lisp считается, что вызов владеет объектами, полученными в качестве
+возвращаемых значений, но не объектами, переданными ему в качестве
+аргументов. Функции, изменяющие свои аргументы, определяются с помощью
+метки "деструктивный", но нет никакого специального названия для
+функций, изменяющих возвращенные им объекты.
+
+
+This function adheres to the convention, for example:
+
+
+Например, эта функция придерживается соглашения:
+
+
+
+(defun ok (x)
+  (nconc (list 'a x) (list 'c)))
+
+
+It calls nconc, which doesn't, but since the list spliced by nconc
+will always be freshly made rather than, say, a list passed to ok as
+an argument, ok itself is ok.
+
+
+Она вызывает nconc, который не придерживается [соглашения], но
+поскольку список, сформированный nconc будет всегда новым, в отличие,
+например, от списка, переданного ok в качестве аргумента, ok сам по
+себе в порядке.
+
+
+
+If it were written slightly differently, however,
+
+
+Если она была бы написана несколько иначе, тем не менее,
+
+
+(defun not-ok (x)
+  (nconc (list 'a) x (list 'c)))
+
+
+
+then the call to nconc would be modifying an argument passed to
+not-ok.
+
+
+вызов nconc изменил бы аргумент, переданный not-ok.
+
+
+
+Many Lisp programs violate this convention, at least locally. However,
+as we saw with ok, local violations need not disqualify the calling
+function. And functions which do meet the preceding conditions will
+retain many of the advantages of purely functional code.
+
+
+Многие Lisp программисты нарушают это соглашение, по крайней мере
+локально. Однако, как мы видели в ok, локальные нарушения не должны
+делать негодной вызывающую функцию. И функции, действительно
+отвечающие предыдущим условиям, будут содержать в себе множество
+преимуществ чисто функционального кода.
+
+
+
+To write programs that are really indistinguishable from functional
+code, we have to add one more condition. Functions can't share objects
+with other code that doesn't follow the rules. For example, though
+this function doesn't have side-effects,
+
+
+Чтобы писать программы, действительно не отличимые от функционального
+кода, мы должны добавить еще одно условие. Функции не могут совместно
+использовать объекты с остальным кодом, который не следует следующим
+правилам. Например, хотя эта функция и не имеет побочных эффектов,
+
+
+
+(defun anything (x)
+  (+ x *anything*))
+
+
+
+its return value depends on the global variable *anything*. So if any
+other function can alter the value of this variable, anything could
+return anything.
+
+
+ее значение зависит от глобальной переменной *anything*. Так, если
+любая другая функция может изменять значение этой переменной, то
+anything может возвращать что угодно.
+
+
+
+Code written so that each invocation only modifies what it owns is
+almost as good as purely functional code. A function that meets all
+the preceding conditions at least presents a functional interface to
+the world: if you call it twice with the same arguments, you should
+get the same results. And this, as the next section will show, is a
+crucial ingredient in bottom-up programming.
+
+
+Код, написанный таким образом, что каждый вызов изменяет лишь только
+то, чем он владеет, почти так же хорош, как и чисто функциональный
+код. Функция, удовлетворяющая всем приведенным выше условиям,
+представляет миру функциональный интерфейс: если вызвать ее дважды с
+теми же аргументами, то вы должны получить одинаковые результаты. И
+это, как будет показано в следующем разделе, является важным
+ингредиентом в программировании снизу-вверх.
+
+
+
+One problem with destructive operations is that, like global
+variables, they can destroy the locality of a program. When you're
+writing functional code, you can narrow your focus: you only need
+consider the functions that call, or are called by, the one you're
+writing. This benefit disappears when you want to modify something
+destructively. It could be used anywhere.
+
+
+Одна из проблем с деструктивными операциями заключается в том, что,
+как и глобальные переменные, они могут разрушить локальность
+программы. Во время написания функционального кода, вы можете сузить
+свое поле зрения: необходимо рассмотреть лишь функции, которые
+вызывают ту или вызываются той, которую вы пишете. Данное преимущество
+исчезает, если вы хотите изменить что-то деструктивно. Это может быть
+использовано где угодно.
+
+
+
+The conditions above do not guarantee the perfect locality you get
+with purely functional code, though they do improve things
+somewhat. For example, suppose that f calls g as below:
+
+
+Приведенные выше условия не гарантируют, что вы получите идеальную
+локальность вместе с чисто функциональным кодом, хотя они несколько
+улучшают положение вещей. Например, предположим, что f вызывает g, как
+показано ниже:
+
+
+(defun f (x)
+  (let ((val (g x)))
+    ; safe to modify val here?
+    ; безопасно ли здесь изменить val?
+    ))
+
+
+Is it safe for f to nconc something onto val? Not if g is identity:
+then we would be modifying something originally passed as an argument
+to f itself.
+
+
+Безопасно ли для f присоединить что-нибудь к val с помощью nconc? Нет,
+если g такая же [деструктивная]: тогда мы бы изменяли что-то,
+изначально переданное самой f в качестве аргумента.
+
+
+
+
+So even in programs which do follow the convention, we may have to
+look beyond f if we want to modify something there. However, we don't
+have to look as far: instead of worrying about the whole program, we
+now only have to consider the subtree beginning with f.
+
+
+Поэтому, даже в программах, которые следуют соглашению, нам, возможно,
+придется выйти за пределы f в том случае, если мы захотим там что-то
+изменить. Тем не менее, не придется идти слишком далеко: вместо того,
+чтобы беспокоиться о всей программе, теперь только лишь нужно
+рассмотреть поддерево, начиная с f.
+
+
+
+A corollary of the convention above is that functions shouldn't return
+anything that isn't safe to modify. Thus one should avoid writing
+functions whose return values incorporate quoted objects. If we define
+exclaim so that its return value incorporates a quoted list,
+
+
+Следствием приведенного выше соглашения является то, что те функции не
+должны возвращать ничего, что небезопасно изменять. Таким образом,
+следует избегать написания функций, возвращаемые значения которых
+включают в себя квотированные объекты. Если мы определим excalaim так,
+что его возвращаемые значения включают в себя квотированный список, то
+
+
+
+(defun exclaim (expression)
+  (append expression '(oh my)))
+
+
+Then any later destructive modification of the return value
+
+Тогда любое последующее деструктивное изменение возвращаемого значения
+
+
+> (exclaim '(lions and tigers and bears))
+=> (LIONS AND TIGERS AND BEARS OH MY)
+
+
+> (nconc * '(goodness))
+=> (LIONS AND TIGERS AND BEARS OH MY GOODNESS)
+
+
+could alter the list within the function:
+
+может изменить список внутри функции:
+
+
+> (exclaim '(fixnums and bignums and floats))
+=> (FIXNUMS AND BIGNUMS AND FLOATS OH MY GOODNESS)
+
+
+To make exclaim proof against such problems, it should be written:
+
+
+Для того чтобы сделать exclaim защищенной от такого рода проблем, ее
+следовало написать так:
+
+
+(defun exclaim (expression)
+  (append expression (list 'oh 'my)))
+
+
+There is one major exception to the rule that functions shouldn't
+return quoted lists: the functions which generate macro
+expansions. Macro expanders can safely incorporate quoted lists in the
+expansions they generate, if the expansions are going straight to the
+compiler.
+
+
+Существует одно важное исключение из того правила, что функции не
+должны возвращать квотированные списки: функции, которые генерируют
+макрорасширения. Макрорасширители могут без проблем включать
+квотированные списки в порождаемые ими расширения в том случае, если
+расширения прямо передаются компилятору.
+
+
+
+Otherwise, one might as well be a suspicious of quoted lists
+generally. Many other uses of them are likely to be something which
+ought to be done with a macro like in (page 152).
+
+
+С другой стороны, можно было бы также с подозрением относиться к
+квотированным спискам в целом. Можно придумать им и множество других
+применений, которые скорее всего будут выполнены с помощью макросов
+наподобие in.
