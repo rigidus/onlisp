@@ -1,0 +1,296 @@
+2.2 Deﬁning Functions
+
+2.2 Определение функций.
+
+
+Most people ﬁrst learn how to make functions with defun. The following
+expression deﬁnes a function called double which returns twice its
+argument.
+
+Многие сначала узнают, как создавать функции при помощи
+defun. Следующее выражение определяет функцию с именем double, которая
+возвращает удвоение аргумента.
+
+
+> (defun double (x) (* x 2)) DOUBLE
+
+> (defun double (x) (* x 2)) DOUBLE History of edits (Latest: cvb 1
+year, 8 months ago) §
+
+
+Having fed this to Lisp, we can call double in other functions, or
+from the toplevel:
+
+Скормив это Lisp, мы можем вызывать double из других функций или из
+верхнего уровня:
+
+
+> (double 1) 2
+
+> (double 1) 2 History of edits (Latest: cvb 1 year, 8 months ago) §
+
+
+A ﬁle of Lisp code usually consists mainly of such defuns, and so
+resembles a ﬁle of procedure deﬁnitions in a language like C or
+Pascal. But something quite different is going on. Those defuns are
+not just procedure deﬁnitions, they’re Lisp calls. This distinction
+will become clearer when we see what’s going on underneath defun.
+
+
+Файл с исходным кодом Лисп, как правило, состоит из подобных defun и
+так походит на файл с определением процедур на языке Си или
+Паскаль. Но происходит кое-что совершенно другое. Эти defun – это не
+только определения процедур, но и вызовы Лисп. Это различие станет
+более ясным, когда мы увидим, что же происходит внутри defun.
+
+Functions are objects in their own right. What defun really does is
+build one, and store it under the name given as the ﬁrst argument. So
+as well as calling double, we can get hold of the function which
+implements it. The usual way to do so is by using the #’ (sharp-quote)
+operator. This operator can be understood as mapping names to actual
+function objects. By afﬁxing it to the name of double
+
+
+Функции – это полноправные объекты. На самом деле, defun выстраивает
+такой объект и сохраняет его под именем, заданным первым
+аргументом. Помимо вызова double, мы можем выяснить, что за функция
+его реализует. Обычно это делают при помощи оператора #'. Этот
+оператор следует понимать как отображение имен на существующие
+функциональные объекты. Применяя его к имени double,
+
+
+> #’double #<Interpreted-Function C66ACE>
+
+> #’double <Interpreted-Function C66ACE> History of edits (Latest: cvb
+#1 year, 8 months ago) §
+
+
+we get the actual object created by the deﬁnition above. Though its
+printed representation will vary from implementation to
+implementation, a Common Lisp function is a ﬁrst-class object, with
+all the same rights as more familiar objects like numbers and
+strings. So we can pass this function as an argument, return it, store
+it in a data structure, and so on:
+
+мы получим реально существующий объект, созданный определением
+выше. Хотя это напечатанное представление меняется от реализации к
+реализации, функция Коммон Лисп – это объект первого класса с
+полностью такими же правами, как и более привычные объекты, вроде
+чисел и строк. Так что мы можем передавать эту функцию как аргумент,
+возвращать ее, сохранять в структуре данных и так далее: History of
+edits (Latest: zoid 1 year, 8 months ago) §
+
+
+> (eq #’double (car (list #’double))) T
+
+> (eq #’double (car (list #’double))) T
+
+
+We don’t even need defun to make functions. Like most Lisp objects, we
+can refer to them literally. When we want to refer to an integer, we
+just use the integer itself. To represent a string, we use a series of
+characters surrounded by double-quotes. To represent a function, we
+use what’s called a lambda-expression. A lambda-expression is a list
+with three parts: the symbol lambda, a parameter list, and a body of
+zero or more expressions. This lambda-expression refers to a function
+equivalent to double:
+
+
+Нам даже не нужен defun, чтобы создавать функции. Как и на большинство
+объектов Лисп, мы можем прямо на них ссылаться. Когда мы хотим
+сослаться на целое число, мы прямо используем само целое число. Для
+представления строки мы используем последовательность символов,
+окруженных двойными кавычками. Для представления функции мы используем
+так называемое лямбда-выражение. Лямбда-выражение – это список,
+состоящий из трех частей: символа лямбда, списка параметров и тела из
+нуля или более выражений. Лямбда-выражение ссылается на функцию,
+эквивалентную double:
+
+
+(lambda (x) (* x 2))
+
+(lambda (x) (* x 2))
+
+
+It describes a function which takes one argument x, and returns 2x.
+
+Оно описывает функцию, принимающую один аргумент x и возвращающую 2x.
+
+
+A lambda-expression can also be considered as the name of a
+function. If double is a proper name, like “Michelangelo,” then
+(lambda (x) (* x 2)) is a deﬁnite description, like “the man who
+painted the ceiling of the Sistine Chapel.” By putting a sharp-quote
+before a lambda-expression, we get the corresponding function:
+
+
+Лямбда-выражение также может рассматриваться как имя функции. Если
+double – имя собственное, как “Микеланджело”, то (lambda (x) (* x 2))
+– точное определение, как “человек, расписавший свод Сикстинской
+капеллы”. Помещая диез-кавычку перед лямбда-выражением, мы получим
+соответствующую функцию:
+
+
+> #’(lambda (x) (* x 2)) #<Interpreted-Function C674CE>
+
+> #’(lambda (x) (* x 2)) <Interpreted-Function C674CE> History of
+#edits (Latest: cvb 1 year, 8 months ago) §
+
+
+— : After #\# is #\RIGHT_SINGLE_QUOTATION_MARK an undefined dispatch
+macro Измените, пожалуйста, апострофы на прямые '. При копировании
+примеров в интерпретатор Lisp ошибки выполнения форм. — lispuser
+
+
+This function behaves exactly like double, but the two are distinct
+objects.
+
+Эта функция ведет себя точно так же, как и double, но это два
+различных объекта.
+
+
+In a function call, the name of the function appears ﬁrst, followed by
+the arguments:
+
+При вызове функции имя функции идет в начале, а за ним следуют
+аргументы:
+
+
+> (double 3) 6
+
+> (double 3) 6
+
+
+Since lambda-expressions are also names of functions, they can also
+appear ﬁrst in function calls:
+
+Так как лямбда-выражения – это также имена функций, то при вызове
+функций они также могут появиться в начале:
+
+
+> ((lambda (x) (* x 2)) 3) 6
+
+> ((lambda (x) (* x 2)) 3) 6
+
+
+In Common Lisp, we can have a function named double and a variable
+named double at the same time.
+
+В Коммон Лисп у нас одновременно может быть функция с именем double и
+переменная с именем double.
+
+
+> (setq double 2) 2 > (double double) 4
+
+> (setq double 2) 2 > (double double) 4
+
+
+When a name occurs ﬁrst in a function call, or is preceded by a
+sharp-quote, it is taken to refer to a function. Otherwise it is
+treated as a variable name.
+
+
+Когда имя встречается первым при вызове функции или ему предшествует
+диез-кавычка, то оно воспринимается как ссылка на функцию. В противном
+случае рассматривается как имя переменной.
+
+
+It is therefore said that Common Lisp has distinct name-spaces for
+variables and functions. We can have a variable called foo and a
+function called foo, and they need not be identical. This situation
+can be confusing, and leads to a certain amount of ugliness in code,
+but it is something that Common Lisp programmers have to live with.
+
+
+Именно поэтому говорят, что Коммон Лисп имеет особые пространства имен
+для переменных и функций. У нас может быть переменная с именем foo и
+функция с именем foo, и им необязательно быть одинаковыми. Ситуация
+может сбивать с толку и приводить к определенному уродству в коде, но
+это что-то, с чем программисты Common Lisp вынуждены сосуществовать.
+
+
+If necessary, Common Lisp provides two functions which map symbols to
+the values, or functions, that they represent. The function
+symbol-value takes a symbol and returns the value of the corresponding
+special variable:
+
+Если необходимо, Коммон Лисп предоставляет две функции, отображающие
+символы в значения или функции, которые они представляют. Функция
+symbol-value принимает символ и возвращает значение соответствующей
+специальной переменной:
+
+
+> (symbol-value ’double) 2
+
+> (symbol-value ’double) 2
+
+
+while symbol-function does the same for a globally deﬁned function:
+
+в то время как symbol-function делает то же самое для глобально
+определенной функции:
+
+
+> (symbol-function ’double) #<Interpreted-Function C66ACE>
+
+> (symbol-function ’double) #<Interpreted-Function C66ACE>
+
+
+Note that, since functions are ordinary data objects, a variable could
+have a function as its value:
+
+Обратите внимание: так как функции являются обычными объектами данных,
+переменные могут иметь функцию в качестве значения:
+
+
+> (setq x #’append) #<Compiled-Function 46B4BE> > (eq (symbol-value
+  ’x) (symbol-function ’append)) T
+
+> (setq x #’append) #<Compiled-Function 46B4BE> > (eq (symbol-value
+’x) (symbol-function ’append)) T
+
+
+Beneath the surface, defun is setting the symbol-function of its ﬁrst
+argument to a function constructed from the remaining arguments. The
+following two expressions do approximately the same thing:
+
+
+За кулисами defun устанавливает symbol-function от первого аргумента
+на функцию, состоящую из последующих аргументов. Следующие два
+выражения делают примерно то же самое:
+
+(defun double (x) (* x 2))
+
+(defun double (x) (* x 2))
+
+
+(setf (symbol-function ’double) #’(lambda (x) (* x 2)))
+
+(setf (symbol-function ’double) #’(lambda (x) (* x 2)))
+
+
+— : After #\# is #\RIGHT_SINGLE_QUOTATION_MARK an undefined dispatch
+macro Измените, пожалуйста, апострофы на прямые '. При копировании
+примеров в интерпретатор Lisp ошибки выполнения форм. — lispuser
+
+
+So defun has the same effect as procedure deﬁnition in other
+languages—to associate a name with a piece of code. But the underlying
+mechanism is not the same. We don’t need defun to make functions, and
+functions don’t have to be stored away as the value of some
+symbol. Underlying defun, which resembles procedure deﬁnition in any
+other language, is a more general mechanism: building a function and
+associating it with a certain name are two separate operations. When
+we don’t need the full generality of Lisp’s notion of a function,
+defun makes function deﬁnition as simple as in more restrictive
+languages.
+
+Итак, defun делает то же, что и описание процедуры в других языках –
+связывает имя с участком кода. Но лежащий в основе механизм иной. Нам
+не нужен defun для создания функций, и функции не обязаны сохраняться
+как значение некоторого символа. В основе defun, который аналогичен
+описанию процедуры в любом другом языке, лежит более общий механизм:
+создание функции и связывание ее с определенным именем – это две
+различные операции. Когда нам не требуется полная общность
+представления функций в Лисп, defun делает определение функции таким
+же простым, как и в более ограниченных языках.
