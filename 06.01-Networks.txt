@@ -167,4 +167,4 @@ Figure 6.4: Function for traversing networks.
 #’(lambda () conts))))
 Figure 6.5: A network compiled into closures.
 
-Figure 6.5: Сеть с использование замыканий.
+Figure 6.5: Сеть с использованием замыканий.
