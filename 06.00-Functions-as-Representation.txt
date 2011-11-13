@@ -1,0 +1,40 @@
+On Lisp - Chapter 6
+
+На Лисп - Глава 6
+
+
+Functions as Representation
+
+Функции как представление
+
+
+Generally, data structures are used to represent. An array could represent a
+geometric transformation; a tree could represent a hierarchy of command; a graph
+could represent a rail network. In Lisp we can sometimes use closures as a
+representation. Within a closure, variable bindings can store information, and can
+also play the role that pointers play in constructing complex data structures. By
+making a group of closures which share bindings, or can refer to one another, we
+can create hybrid objects which combine the advantages of data structures and
+programs.
+
+Как правило, для представления информации используются структуры данных. Массив может
+быть использован как представление геометрических преобразований; дерево может
+представлять иерархию команд; граф может представлять систему железнодорожной сети.
+В Лиспе, иногда мы можем использовать замыкания в роли представления чего-либо.
+Внутри замыкания, переменные могут хранить информацию, и могут также играют роль,
+которую играют указатели при построении сложных структур данных. Создав группу
+замыканий, которые предоставляют доступ к замкнутым переменным, или могут ссылаться
+друг на друга, мы можум создавать гибридные объекты, которые объединяют в себе
+преимущества структур данных и программ.
+
+
+Beneath the surface, shared bindings are pointers. Closures just bring us the
+convenience of dealing with themat a higher level of abstraction. By using closures
+to represent something we would otherwise represent with static data structures,
+we can often expect substantial improvements in elegance and efficiency.
+
+На более низком уровне, разделяемые связанные переменные представляют собой указатели.
+Замыкания просто предоставляют нам удобства взаимодействия с ними на более высоком
+уровне абстракции. Используя замыкания для представления чего-либо, где обычно
+используются статические структуры данных, мы можем получить более элегантный и
+эффективный код.

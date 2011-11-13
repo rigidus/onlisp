@@ -1,0 +1,126 @@
+6.2 Compiling Networks
+
+6.2 Компиляция сетей
+
+
+In the preceding section we wrote a network program as it might have been written
+in any language. Indeed, the program is so simple that it seems odd to think that
+we could write it any other way. But we can—in fact, we can write it much more
+simply.
+
+В предыдущем разделе мы написали программы для работы с сетью так, как она могла бы
+быть написана на любом другом языке. Действительно, программа настолько проста, что
+кажется странным думать, что ее можно написать по-другому. Но, на самом деле, мы
+можем реализовать ее гораздо проще.
+
+
+(defvar *nodes* nil)
+(defun defnode (&rest args)
+(push args *nodes*)
+args)
+(defun compile-net (root)
+(let ((node (assoc root *nodes*)))
+(if (null node)
+nil
+(let ((conts (second node))
+(yes (third node))
+(no (fourth node)))
+(if yes
+(let ((yes-fn (compile-net yes))
+(no-fn (compile-net no)))
+#’(lambda ()
+(format t "~A~%>> " conts)
+(funcall (if (eq (read) ’yes)
+yes-fn
+no-fn))))
+#’(lambda () conts))))))
+Figure 6.6: Compilation with static references.
+
+Рисунок 6.6: Компиляция со статическими ссылками.
+
+
+The code in Figure 6.5 illustrates this point. It’s all we really need to run our
+network. Instead of having nodes as data structures and a separate function to
+traverse them, we represent the nodes as closures. The data formerly contained in
+the structures gets stored in variable bindings within the closures. Now there is no
+need for run-node; it is implicit in the nodes themselves. To start the traversal,
+we just funcall the node at which we want to begin:
+
+Код на рисунке 6.5 показывает такой пример. Это все, что нам действительно нужно,
+чтобы запустить нашу программу. Вместо того, чтобы иметь отдельно структуры данных
+для узлов, и отдельную функциюдля их обхода, мы представляем узлы как замыкания.
+Данные, ранее хранимые в структуры, сохраняются в связанных переменных внутри
+замыканий. Теперь нет необходимость в функции run-node; эта функциональность
+заложена в самих узлах. Для того, чтобы начать обход, мы просто делаем вызов
+узла-замыкания, в котором мы хотим перейти:
+
+
+(funcall (gethash ’people *nodes*))
+Is the person a man?
+>>
+
+
+From then on, the transcript will be just as itwas with the previous implementation.
+
+После этого, выполнение будет аналогичным предыдущей реализации.
+
+
+By representing the nodes as closures, we are able to transform our twentyquestions
+network entirely into code. As it is, the code will have to look up the
+node functions by name at runtime. However, if we know that the network is
+not going to be redefined on the fly, we can add a further enhancement: we can
+have node functions call their destinations directly, without having to go through
+a hash-table.
+
+Представляя узлы как замыкания, мы можем превратить нашу сеть целиком в код. Сейчас,
+код должен искать узлы по имени во время выполнения. Однако, если мы знаем, что сеть
+не будет изменяться во время выполнения, мы можем добавить следующее улучшение: мы
+можем делать вызовы функций непосредственно, без необходимости проходить по хэш-таблице.
+
+
+Figure 6.6 contains a new version of the program. Now *nodes* is a disposable
+list instead of a hash-table. All the nodes are defined with defnode as
+before, but no closures are generated at this point. After all the nodes have been
+defined, we call compile-net to compile a whole network at once. This function
+recursively works its way right down to the leaves of the tree, and on the way
+back up, returns at each step the node/function for each of the two subtrees. 1 So
+now each node will have a direct handle on its two destinations, instead of having
+only their names. When the original call to compile-net returns, it will yield a
+function representing the portion of the network we asked to have compiled.
+
+Рисунок 6.6 содержит новую версию программы. Теперь перменная *nodes* представляет
+собой одноразовый списк, а не хэш-таблицу. Все узлы определяются в defnode как
+и раньше, но в этот раз никаких замыканий не создается. После того как все узлы
+определены, мы вызываем compile-net для компиляции всей сети сразу. Эта функция
+рекурсивно проходит свой путь вплоть до листьев дерева, и на пути обратно,
+возвращает на каждом шаге узел-функцию для каждого из двух поддеревьев. Итак,
+теперь каждый узел будет иметь прямые ссылки на обработчики обоих направлений,
+а не только их имена. Когда первоначальный вызов compile-net завершается, он
+возвращает функцию, представляющую часть сети, которую мы попросили собрать.
+
+
+> (setq n (compile-net ’people))
+#<Compiled-Function BF3C06>
+> (funcall n)
+Is the person a man?
+>>
+
+
+Notice that compile-net compiles in both senses. It compiles in the general
+sense, by translating the abstract representation of the network into code. Moreover,
+if compile-net itself is compiled, it will return compiled functions. (See
+page 25.)
+
+Обратите внимание, что compile-net производит компиляцию в обоих смыслах. Происходит
+компиляция в общем смысле, путем трансляции абстрактного представления сети в код.
+Более того, если функция compile-net компилируется, она возвращает скомпилированные
+функции. (См. стр. 25.)
+
+
+After compiling the network, we will no longer need the list made by defnode.
+It can be cut loose (e.g. by setting *nodes* to nil) and reclaimed by the garbage
+collector.
+
+После компиляции сети, нам больше не нужен список, созданный с помощью defnode. Он
+может быть выброшен (например, путем установки *nodes* в nil) и удален сборщиком
+мусора.
