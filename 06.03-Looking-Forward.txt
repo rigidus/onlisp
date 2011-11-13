@@ -1,0 +1,29 @@
+6.3 Looking Forward
+
+6.3 Заглядывая в будущее
+
+
+Many programs involving networks can be implemented by compiling the nodes
+into closures. Closures are data objects, and they can be used to represent things
+just as structures can. Doing so requires some unconventional thinking, but the
+rewards are faster and more elegant programs.
+
+Многие программы, связанные с сетями могут быть реализованы путем компиляции
+узлов в замыкания. Замыкания представляют собой данные, и они могут быть
+использованы для представления различных вещей так же, как и структуры. Это
+требует некоторого нестандартного мышления, но наградой будут более быстрые
+и элегантные программы.
+
+
+Macros help substantially when we use closures as a representation. “To
+represent with closures” is another way of saying “to compile,” and since macros
+do their work at compile-time, they are a natural vehicle for this technique.
+After macros have been introduced, Chapters 23 and 24 will present much larger
+programs based on the strategy used here.
+
+
+Макросы могу помочь существенно, когда мы используем замыкания для представления
+данных. "Представить в виде замыкания" это еще один способ сказать "скомпилировать",
+и так как макросы работают во время компиляции, они являются естественным средством
+для этого. После того, как макросы будут представлены, главы 23 и 24 покажут
+гораздо больше программ, основанных на используемой здесь стратегии.

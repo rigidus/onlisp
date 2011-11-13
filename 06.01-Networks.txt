@@ -1,0 +1,170 @@
+6.1 Networks
+
+6.1 Сети
+
+
+Closures have three useful properties: they are active, they have local state, and
+we can make multiple instances of them. Where could we use multiple copies
+of active objects with local state? In applications involving networks, among
+others. In many cases we can represent nodes in a network as closures. As well as
+having its own local state, a closure can refer to another closure. Thus a closure
+representing a node in a network can know of several other nodes (closures) to
+which it must send its output. This means that we may be able to translate some
+networks straight into code.
+
+Замыкания имеют три полезных свойства: они активны, у них есть локальное состояние, и
+мы можем создавать много экземпляров при необходимости. Где нам нужно использовать
+несколько копий активных объектов с локальным состоянием? В приложениях с сетями,
+среди прочего. Во многих случаях мы можем представить узлы в сети как замыкания.
+Кроме наличия собственного состояния, замыкания могут ссылаться друг на друга. Таким
+образом узел сети ввиде замыкания может знать несколько других узлов (замыканий)
+которым он должен посылать свой вывод. Это означает, что у нас будет возможность
+переносить некоторые сети непосредственно в код.
+
+
+> (run-node ’people)
+Is the person a man?
+>> yes
+Is he living?
+>> no
+Was he American?
+>> yes
+Is he on a coin?
+>> yes
+Is the coin a penny?
+>> yes
+LINCOLN
+Figure 6.1: Session of twenty questions.
+
+Рисунок 6.1: Пример игры "20 вопросов".
+
+
+In this section and the next we will look at two ways to traverse a network.
+First we will follow the traditional approach, with nodes defined as structures, and
+separate code to traverse the network. Then in the next section we’ll show how to
+build the same program from a single abstraction.
+
+В этом и следующем параграфах мы рассмотрим два способа обхода сети. Сначала
+мы будем следовать традиционному подходу, где узлы определяются как структуры,
+и существует отдельный код для обхода сети. Затем, в следующем разделе мы покажем,
+как написать такую же программу на основе одной абстракции.
+
+
+As an example, we will use about the simplest application possible: one of
+those programs that play twenty questions. Our network will be a binary tree.
+Each non-leaf node will contain a yes/no question, and depending on the answer
+to the question, the traversal will continue down the left or right subtree. Leaf
+nodes will contain return values. When the traversal reaches a leaf node, its value
+will be returned as the value of the traversal. A session with this program might
+look as in Figure 6.1.
+
+В качестве примера мы будем использовать самый простой случай: одну из тех
+программ, которые играют в "20 вопросов". Наша сеть будет представлена бинарным
+деревом. Каждый нетерминальный узел будет содержать вопрос типа "да/нет", и в
+зависимости от ответа на вопрос, обход будет продолжаться по левому или правому
+поддереву. Терминальные узлы (листья) будут содержать результаты. Когда будет
+достигнут конечный узел, его значение будет возвращено в качестве результата обхода.
+Взаимодействие с этой программой может выглядеть как на рисунке 6.1.
+
+
+The traditional way to begin would be to define some sort of data structure to
+represent nodes. A node is going to have to know several things: whether it is a
+leaf; if so, which value to return, and if not, which question to ask; and where to
+go depending on the answer. A sufficient data structure is defined in Figure 6.2.
+It is designed for minimal size. The contents field will contain either a question
+or a return value. If the node is not a leaf, the yes and no fields will tell where to
+go depending on the answer to the question; if the node is a leaf, we will know it
+because these fields are empty. The global *nodes* will be a hash-table in which
+nodes are indexed by name. Finally, defnode makes a new node (of either type)
+and stores it in *nodes*. Using these materials we could define the first node of
+our tree:
+
+Традиционный способ начать работу - это определить какую-то структуру данных для
+представления узлов сети. Узел должен хранить определенную информацию: если это
+лист дерева, то какое значение возвращать, а если нет, то какой вопрос задать, и
+куда идти в зависимости от ответа. Удовлетворяющая этим требования структура данных
+представлена на рисунке 6.2. Она рассчитана на минимальный размер. Поле contents
+будет содержать вопрос или возвращаемое значение. Если узел не терминальный, поля
+yes и no скажут, куда идти в зависимости от ответа на вопрос; если узел является
+листом, мы узнаем это, т.к. эти поля будут пустыми. Глобальная переменная *nodes*
+будет хэш-таблицей, в которой узлы будут индексированы по имени. Наконец, функция
+defnode будет создавать новый узел (любого типа) и сохраняет его в *nodes*.
+Используя эти составные кирпичики, мы можем определить первый узел нашего дерева:
+
+
+(defnode ’people "Is the person a man?"
+’male ’female)
+
+
+(defstruct node contents yes no)
+(defvar *nodes* (make-hash-table))
+(defun defnode (name conts &optional yes no)
+(setf (gethash name *nodes*)
+(make-node :contents conts
+:yes yes
+:no no)))
+Figure 6.2: Representation and definition of nodes.
+
+Рисунок 6.2: Представление и определение узлов.
+
+
+(defnode ’people "Is the person a man?" ’male ’female)
+(defnode ’male "Is he living?" ’liveman ’deadman)
+(defnode ’deadman "Was he American?" ’us ’them)
+(defnode ’us "Is he on a coin?" ’coin ’cidence)
+(defnode ’coin "Is the coin a penny?" ’penny ’coins)
+(defnode ’penny ’lincoln)
+Figure 6.3: Sample network.
+
+Рисунок 6.3: Пример сети.
+
+
+Figure 6.3 shows as much of the network as we need to produce the transcript in
+Figure 6.1.
+
+Рисунок 6.3 показывает все, что необходимо для примера из рисунка 6.1.
+
+
+Now all we need to do is write a function to traverse this network, printing
+out the questions and following the indicated path. This function, run-node, is
+shown in Figure 6.4. Given a name, we look up the corresponding node. If it is
+not a leaf, the contents are asked as a question, and depending on the answer,
+we continue traversing at one of two possible destinations. If the node is a leaf,
+run-node just returns its contents. With the network defined in Figure 6.3, this
+function produces the output shown in Figure 6.1.
+
+Теперь все, что нужно сделать, это написать функцию для обхода этой сети, вывода
+вопросов и следования указанному пути. Эта функция, run-node, показана на
+рисунке 6.4. Указывая имя, мы ищем соответствующий узел. Если это не лист,
+задается вопрос из поля content, и в зависимости от ответа, мы продолжаем обход
+в одном из двух возможных направлений. Если узел терминальный, run-node просто
+возвращает значение поля content. При обходе сети с рисунка 6.3, эта функция
+производит результат, показанный на рисунке 6.1.
+
+
+(defun run-node (name)
+(let ((n (gethash name *nodes*)))
+(cond ((node-yes n)
+(format t "~A~%>> " (node-contents n))
+(case (read)
+(yes (run-node (node-yes n)))
+(t (run-node (node-no n)))))
+(t (node-contents n)))))
+Figure 6.4: Function for traversing networks.
+
+Рисунок 6.4: Функция обхода сети.
+
+
+(defvar *nodes* (make-hash-table))
+(defun defnode (name conts &optional yes no)
+(setf (gethash name *nodes*)
+(if yes
+#’(lambda ()
+(format t "~A~%>> " conts)
+(case (read)
+(yes (funcall (gethash yes *nodes*)))
+(t (funcall (gethash no *nodes*)))))
+#’(lambda () conts))))
+Figure 6.5: A network compiled into closures.
+
+Figure 6.5: Сеть с использованием замыканий.
