@@ -452,7 +452,7 @@ DO2
 : (choose (foo) (bar))
 на
 #+BEGIN_EXAMPLE
-(choose-bind x ’(1 2)
+(choose-bind x '(1 2)
   (case x
     (1 (foo))
     (2 (bar))))
@@ -536,8 +536,8 @@ DO2
 быть вложены друг в друга:
 
 #+BEGIN_EXAMPLE
-> (choose-bind first-name ’(henry william)
-    (choose-bind last-name ’(james higgins)
+> (choose-bind first-name '(henry william)
+    (choose-bind last-name '(james higgins)
       (=values (list first-name last-name))))
 (HENRY JAMES)
 > (fail)
@@ -575,22 +575,22 @@ DO2
 DESCENT
 > (defun kids (n)
     (case n
-      (a ’(b c))
-      (b ’(d e))
-      (c ’(d f))
-      (f ’(g))))
+      (a '(b c))
+      (b '(d e))
+      (c '(d f))
+      (f '(g))))
 KIDS
-> (descent ’a ’g)
+> (descent 'a 'g)
 (A C F G)
 > (fail)
 @
-> (descent ’a ’d)
+> (descent 'a 'd)
 (A B D)
 > (fail)
 (A C D)
 > (fail)
 @
-> (descent ’a ’h)
+> (descent 'a 'h)
 @
 #+END_SRC
 
@@ -606,5 +606,5 @@ ATN-компилятор на одной странице кода (глава 2
 с оптимизацией хвостовой рекурсии - не только ради ускорения, но и
 чтобы предотвратить исчерпание места на стеке.  Программы,
 «возвращающие» значения вызовом продолжений, в действительности не
-возвращаются до последней /неудачи/.  Без хвостовой оптимизации, стек
+возвращаются до последней /неудачи/.  Без хвостовой оптимизации стек
 будет расти и расти.
