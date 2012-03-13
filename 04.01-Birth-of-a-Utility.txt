@@ -42,3 +42,164 @@ say is this.”
 и языка программирования. Для того, что бы сделать это хорошо, вы должны разработать
 хорошее представление, каких операторов в программе нехватает. Вы должны быть способны
 взглянуть на программу и сказать: `Блеать, вот что ты имел ввиду здесь!`
+
+
+For example, suppose that nicknames is a function which takes a name
+and builds a list of all the nicknames which could be derived from it. Given
+this function, how do we collect all the nicknames yielded by a list of names?
+Someone learning Lisp might write a function like:
+
+Например, представьте что никнэйм - это функция которая получает имена и преобразует
+их в список никнэймов. Имея эту функцию, как мы соберем все никнеймы, полученные из
+списка имен? Некто изучающий Lisp может написать эту фукнцию подобным образом:
+
+
+(defun all-nicknames (names)
+  (if (null names)
+      nil
+      (nconc (nicknames (car names))
+      	     (all-nicknames (cdr names)))))
+
+A more experienced Lisp programmer can look at such a function and say “Ah,
+what you really want is mapcan.” Then instead of having to define and call a
+new function to find all the nicknames of a group of people, you can use a single
+expression:
+
+Более опытный Lisp-программист может посмотреть на подобную функцию и сказать `Блеать,
+тебе нужен mapcan.` В результате вместо написания и вызова новой функции нахождения всех никнеймов
+группы людей, ты сможешь использовать одно выражение: 
+
+(mapcan #’nicknames people)
+
+The definition of all-nicknames is reinventing the wheel. However, that’s not
+all that’s wrong with it: it is also burying in a specific function something that
+could be done by a general-purpose operator.
+
+Определение all-nicknames это изобретение велосипеда. Кстати это не единственный косяк
+этой функции: она также прячет в специальной функции нечто, что может быть сделано оператором
+общего назначения.
+
+In this case the operator, mapcan, already exists. Anyone who knew about
+mapcanwould feel a little uncomfortable looking at all-nicknames. To be good
+at bottom-up programming is to feel equally uncomfortable when the missing
+operator is one which hasn’t been written yet. You must be able to say “what you
+really want is x,” and at the same time, to know what x should be.
+
+В таком случае оператор, mapcan, уже существует. Любой, кто знает о
+mapcan чувствует себя некомфортно, смотря на all-nicknames. Хорошо программировать
+снизу вверх значит чувствовать так же некомфортно когда потеряный оператор тот, который
+еще не написан. Вы должны уметь сказать `то что тебе действительно нужно, это X` и в тоже
+время знать, что из себя представляет X
+
+Lisp programming entails, among other things, spinning off new utilities as
+you need them. The aim of this section is to show how such utilities are born.
+Suppose that towns is a list of nearby towns, sorted from nearest to farthest, and
+that bookshops is a function which returns a list of all the bookshops in a city. If
+we want to find the nearest town which has any bookshops, and the bookshops in
+it, we could begin with:
+
+Программирование на Lisp влечет за собой, кроме всего прочего, крутится вокруг новых
+утилит при надобности FIXME. Цель этого раздела - показать как такие утилиты рождаются.
+Представьте, что towns - список близлежащих городов, отсортированных от ближнего к дальнему
+и bookshops - функция, которая возвращает список всех магазинов в городе. Если мы хотим
+найти ближайший город, в котором есть магазины, мы можем начать с:
+
+
+(let ((town (find-if #’bookshops towns)))
+(values town (bookshops town)))
+
+
+But this is a bit inelegant: when find-if finds an element for which bookshops
+returns a non-nil value, the value is thrown away, only to be recomputed as soon
+as find-if returns. If bookshops were an expensive call, this idiom would be
+inefficient as well as ugly. To avoid unnecessarywork, we could use the following
+function instead:
+
+Но это немного коряво: когда find-if находит элемент, для которого bookshops возвращает
+не nil значение, значение выбрасывается наружу, только для повторного расчета при возврате
+из find-if. Если вызов bookshops требует больших ресурсов, эта идиома будет неэффективна и
+убога. Для избежания такого, мы можем использовать следующую функцию:
+
+(defun find-books (towns)
+  (if (null towns)
+      nil
+      (let ((shops (bookshops (car towns))))
+      	   (if shops
+	       (values (car towns) shops)
+	       (find-books (cdr towns))))))
+
+Then calling (find-books towns) would at least get us what we wanted with
+no more computation than necessary. But wait—isn’t it likely that at some time in
+the future we will want to do the same kind of search again? What we really want
+here is a utility which combines find-if and some, returning both the successful
+element, and the value returned by the test function. Such a utility could be defined
+as:	       
+
+Вызов (find-books towns) будет возвращать как минимум что нам надо без лишних рассчетов. Но
+подождите, мы же наверняка захочем подобный тип поиска в будущем опять? Что мы действительно
+здесь хотим, так это утилиту, которая совмещаяет find-if и нечто, возвращающая совпадающий
+элемент и значение, возвращенное проверочной функцией. Такая утилита может быть написана так:
+
+
+(defun find2 (fn lst)
+  (if (null lst)
+      nil
+      (let ((val (funcall fn (car lst))))
+      	 (if val
+	     (values (car lst) val)
+	     (find2 fn (cdr lst))))))
+
+	     
+Notice the similarity between find-books and find2. Indeed, the latter could
+be described as the skeleton of the former. Now, using the new utility, we can
+achieve our original aim with a single expression:
+
+Заметьте похожесть между find-books и find2. Фактически, find2 можно воспринимать
+как скелетон find-books. Сейчас, используя новую утилиту мы можем добиться нашей
+изначальной цели в одно выражение:
+
+(find2 #’bookshops towns)
+
+
+One of the unique characteristics of Lisp programming is the important role
+of functions as arguments. This is part of why Lisp is well-adapted to bottom-up
+programming. It’s easier to abstract out the bones of a function when you can
+pass the flesh back as a functional argument.
+
+Одна из уникальных характеристик Lisp программирования в важной роли передачи
+фукнции как аргумента. Это часть причины, по которой Lisp хорошо адаптирован к
+программированию снизу вверх. Проще написать каркас функции, когда ты можешь
+передать часть начинки в неё в качестве функции-аргумента.
+
+Introductory programming courses teach early on that abstraction leads to less
+duplication of effort. One of the first lessons is: don’t wire in behavior. For
+example, instead of defining two functions which do the same thing but for one
+or two constants, define a single function and pass the constants as arguments.
+
+Вводные курсы программирования учат ранее что абстракция позволяет уменьшать
+усилия. Один из первых уроков: не будьте прямолинейным FIXME. Например, вместо
+определения двух функция которые делают одно и тоже с одной или двумя константами,
+определите одну функцию и передавайте константы как аргументы.
+
+In Lisp we can carry this idea further, because we can pass whole functions as
+arguments. In both of the previous examples we went from a specific function to
+a more general function which took a functional argument. In the first case we
+used the predefined mapcan and in the second we wrote a new utility, find2, but
+the general principle is the same: instead of mixing the general and the specific,
+define the general and pass the specific as an argument.
+
+В Lisp мы можем продолжить эту идею, потому как мы можем передавать не только данные,
+но и код (функции) как аргумент. В обоих предыдущих примерах мы проходим от
+конкретной функции к более общей, которая получает аргументом функцию. В первом
+случае мы исполььзуем предопределенный mapcan; во втором мы пишем новую утилиту,
+find2, но общий принцип такой же: вместо смешивание общего и частного, определяем
+общее и передаем частно как аргумент.
+
+
+When carefully applied, this principle yields noticeably more elegant programs.
+It is not the only force driving bottom-up design, but it is a major one. Of
+the 32 utilities defined in this chapter, 18 take functional arguments.
+
+В случае аккуратного использование этот принцип порождает более элегантные программы.
+Это не единственная сила, поддерживающая архитектуру снизу вверх, но одна из основных.
+Из 32 утилит, определенных в этой главе, 18 получают аргументом функцию.
