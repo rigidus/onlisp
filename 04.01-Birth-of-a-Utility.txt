@@ -1,0 +1,31 @@
+In its simplest form, bottom-up programming means second-guessing whoever
+designed your Lisp. At the same time as you write your program, you also add to
+Lisp new operators which make your program easy to write. These new operators
+are called utilities.
+
+В простейшем виде, программирование снизу вверх подразумевает попытку наебать
+создателей Lisp. FIXME. В то же время, когда вы пишите вашу программу вы так
+же добавляете в Lisp новые операторы которые делают вашу программу более
+простой в написании. Эти новые операторы называются утилитами (стандартные
+либы/API внутри программы)FIXME
+
+
+The term “utility” has no precise definition. A piece of code can be called
+a utility if it seems too small to be considered as a separate application, and too
+general-purpose to be considered as part of a particular program. A database
+program would not be a utility, for example, but a function which performed a
+single operation on a list could be. Most utilities resemble the functions and macros
+that Lisp has already. In fact, many of Common Lisp’s built-in operators began
+life as utilities. The function remove-if-not, which collects all the elements of
+a list satisfying some predicate, was defined by individual programmers for years
+before it became a part of Common Lisp.
+
+Термин `утилита` не имеет точного определения. Кусок кода может быть назван
+утилитой, если он слишком маленький что бы быть отдельным приложением и при
+этом слижком общеупотребителен что бы быть частью одной программы. База данных
+не может быть утилитой, например, но функция, которая производит некую
+операцию над списком может ей быть. Большинство утилит напоминают функции и
+макросы, которые уже есть в Lisp. Фактически, многие встроенные в CL операторы
+начали свою жизнь как утилиты. Функция remove-if-now, которая возвращает все
+элементы, удовлетворяющие некоторому условию, была определена программистами
+за годы до того, как она стала частью CL.

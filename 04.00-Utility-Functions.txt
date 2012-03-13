@@ -1,0 +1,17 @@
+Common Lisp operators come in three types: functions and macros, which you
+can write yourself, and special forms, which you can’t. This chapter describes
+techniques for extending Lisp with new functions. But “techniques” here means
+something different from what it usually does. The important thing to know about
+such functions is not howthey’re written, but where they come from. An extension
+to Lisp will be written using mostly the same techniques you would use to write
+any other Lisp function. The hard part of writing these extensions is not deciding
+how to write them, but deciding which ones to write.
+
+Операторы Common Lisp бывают трех типов: функции и макросы, которые вы можете
+написать, и специальные формы, которые вы написать не можете. Эта глава
+описывает способы расширения Lisp новыми функциями. Но `способы` здесь значат
+нечто отличное от того, что они обычно значит слово `способы`. Важно знать о
+функциях не то, как они написаны, но откуда они появились. Расширения Lisp
+должны быть написаны в-основном тем же способом, каким обычно пишутся любые
+другие функции в Lisp. Сложность написания расширенией не в том, как писать
+их, а в том, что бы решить что именно писать
