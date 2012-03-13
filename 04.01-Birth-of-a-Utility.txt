@@ -29,3 +29,16 @@ before it became a part of Common Lisp.
 начали свою жизнь как утилиты. Функция remove-if-now, которая возвращает все
 элементы, удовлетворяющие некоторому условию, была определена программистами
 за годы до того, как она стала частью CL.
+
+Learning to write utilities would be better described as learning the habit of
+writing them, rather than the technique of writing them. Bottom-up programming
+means simultaneously writing a program and a programming language. To do this
+well, you have to develop a fine sense of which operators a program is lacking.
+You have to be able to look at a program and say, “Ah, what you really mean to
+say is this.”
+
+Обучение написанию утилит может быть лучше описано как привычка писать их, а не описание
+способов написания их. Программирование снизу вверх означает одновременное написание программы
+и языка программирования. Для того, что бы сделать это хорошо, вы должны разработать
+хорошее представление, каких операторов в программе нехватает. Вы должны быть способны
+взглянуть на программу и сказать: `Блеать, вот что ты имел ввиду здесь!`
