@@ -108,9 +108,20 @@ phenomenon appears with programs written bottom-up. Once you have written a
 new utility, you may find yourself using it more than you would have expected.
 
 Набор утилит несомненно сделает программирование проще. Но утилиты также могут
-сделать больше: вы можете начать писать лучшие программы.
+сделать больше: вы можете начать писать лучшие программы. The muses FIXME, например
+повара переходят к делу видя ингридиенты. По этой причине люди искусства любят
+иметь большое количество инструментов и материалов в своих студиях. Они знают,
+что проще начать что-то новое, если они имеют то, что им нужно. Тот же феномен
+происходит с программами, которые написаны снизу вверх. Однажды написав новую утилиту,
+вы можете обнаружить, что вы используете её чаще, чем вы ожидали.
 
 The following sections describe several classes of utility functions. They do
 not by any means represent all the different types of functions you might add to
 Lisp. However, all the utilities given as examples are ones that have proven their
 worth in practice.
+
+Следующие разделы описывают некоторые классы функций-утилит. Это не в коем случае не значит,
+что они показывают все возможные типы функций, которые вы можете добавить в Lisp. Как бы
+то ни было, все эти утилиты даны как образцы функций, которые доказали свою пользу на практике.
+
+
