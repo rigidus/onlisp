@@ -1,0 +1,116 @@
+4.2 Invest in Abstraction
+
+Инвестируй в абстракции
+
+If brevity is the soul of wit, it is also, along with efficiency, the essence of good
+software. The cost of writing or maintaining a program increases with its length. 
+All other things being equal, the shorter program is the better.
+
+Если краткость - сестра таланта, это так же, вместе с эффективностью, сущность хорошего
+софта. Цена написания и поддержки программы растет с длиной. При прочих равных условиях
+более короткая программа лучше.
+
+From this point of view, the writing of utilities should be treated as a capital
+expenditure. By replacing find-books with the utility find2, we end up with
+just as many lines of code. But we have made the program shorter in one sense,
+because the length of the utility does not have to be charged against the current
+program.
+
+С этой точки зрения, написание утилит можно рассматривать как капитальные расходы.
+Заменой find-books на find2 мы получили столько же строк кода. Но мы сделали программу
+короче в некотором смыссле, потому как длина утилиты не покрывается за счет программы.
+
+It is not just an accounting trick to treat extensions to Lisp as capital expenditures.
+Utilities can go into a separate file; they will not clutter our view as we’re
+working on the program, nor are they likely to be involved if we have to return
+later to change the program in some respect.
+
+Это не только трюк подсчета, считать расширения Lisp капитальными вложениями. Утилиты
+могут быть расположены в отдельном файле; они не будут засорять наш взор пока мы работаем
+над программой, да и не будут мешать впоследствии, если мы вернемся к программе позже.
+
+As capital expenditures, however, utilities demand extra attention. It is especially
+important that they be well-written. They are going to be used repeatedly,
+so any incorrectness or inefficiency will be multiplied. Extra care must also go
+into their design: a new utility must be written for the general case, not just for the
+problem at hand. Finally, like any capital expenditure, we need not be in a hurry
+about it. If you’re thinking of spinning off some new operator, but aren’t sure
+that you will want it elsewhere, write it anyway, but leave it with the particular
+program which uses it. Later if you use the new operator in other programs, you
+can promote it from a subroutine to a utility and make it generally accessible.
+
+Как капитальные вложения, конечно же, утилиты требуют дополнительного внимания.
+Это особенно важно, что бы они были хорошо написаны. Они будут использоваться неоднократно,
+а значит любая некорректность или неэффективность будет преумножена. Дополнительное внимание
+так же должно быть уделено их проектированию: новая утилита должна быть написана для общего
+случая, не для текущей проблемы. В конце-концев, как и с любым другим капитальное вложением,
+мы не должны спешить с ней. Если Вы думаете о каком-то новом операторе, но не
+уверены что он понадобится где-то еще, напишите его все равно, но оставьте его
+в той программе, в которой он используется. Позже если вы будете использовать его в
+других программах вы можете преобразовать его в утилиту и открыть к нему общий доступ.
+
+The utility find2 seems to be a good investment. By making a capital outlay
+of 7 lines, we get an immediate savings of 7. The utility has paid for itself in the
+first use. A programming language, Guy Steele wrote, should “cooperate with
+our natural tendency towards brevity:”
+
+Утилита find2 кажется неплохой инвестицией. Сделав вложение в 7 строк мы тут
+же сохранили столько же. Утилита окупила себя при первом использовании. Язык, написанный
+Гаем Стилом должен "соотносится с нашим природным стремлением к краткости:"
+
+    . . .we tend to believe that the expense of a programming construct
+    is proportional to the amount of writer’s cramp that it causes us (by
+    “belief” I mean here an unconscious tendency rather than a fervent
+    conviction). Indeed, this is not a bad psychological principle for
+     language designers to keep in mind. We think of addition as cheap
+    partly because we can notate it with a single character: “+”. Even if
+    we believe that a construct is expensive, we will often prefer it to a
+    cheaper one if it will cut our writing effort in half.
+
+
+    ...мы склонны считать, что расход программных концепций пропорциональны
+    количеству FIXME
+
+In any language, the “tendency towards brevity” will cause trouble unless it is
+allowed to vent itself in new utilities. The shortest idioms are rarely the most
+efficient ones. If we want to know whether one list is longer than another, raw
+Lisp will tempt us to write
+
+В любом языке "тенденция к краткости" будет вызывать проблемы если язык не позволяет
+выражать себя в новых утилитах. Самые краткие идиомы редко бывают самыми эффективными.
+Если мы хотим знать какой из двух списков длиннее другого, чистый Lisp склоняет нас к написанию
+
+(> (length x) (length y))
+
+If we want to map a function over several lists, we will likewise be tempted to join
+them together first:
+
+Если мы хотим map функцию для нескольких списков, мы должны таким же образом написать:
+
+(mapcar fn (append x y z))
+
+Such examples show that it’s especially important to write utilities for situations
+we might otherwise handle inefficiently. A language augmented with the right
+utilities will lead us to write more abstract programs. If these utilities are properly
+defined, it will also lead us to write more efficient ones.
+
+Такие примеры показывают, что очень важно писать утилиты для ситуаций, которые мы иным
+способом можем решить неэффективно. Язык, расширенный правильными утилитами должен
+направлять нас к написанию более абстрактных программ. Если эти утилиты правильно
+определены, это так же будет способствовать к написанию более эффективных программ.
+
+A collection of utilities will certainly make programming easier. But they can
+do more than that: they can make you write better programs. The muses, like
+cooks, spring into action at the sight of ingredients. This is why artists like to
+have a lot of tools and materials in their studios. They know that they are more
+likely to start something new if they have what they need ready at hand. The same
+phenomenon appears with programs written bottom-up. Once you have written a
+new utility, you may find yourself using it more than you would have expected.
+
+Набор утилит несомненно сделает программирование проще. Но утилиты также могут
+сделать больше: вы можете начать писать лучшие программы.
+
+The following sections describe several classes of utility functions. They do
+not by any means represent all the different types of functions you might add to
+Lisp. However, all the utilities given as examples are ones that have proven their
+worth in practice.
