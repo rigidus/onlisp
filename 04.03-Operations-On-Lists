@@ -1,0 +1,225 @@
+4.3 Operations on Lists
+
+4.3 Операции над списками
+
+Lists were originally Lisp’s main data structure. Indeed, the name “Lisp” comes
+from “LISt Processing.” It is as well not to be misled by this historical fact,
+however. Lisp is not inherently about processing lists any more than Polo shirts
+are for Polo. A highly optimized Common Lisp program might never see a list.
+
+Списки изначально главная структура данных Lisp. Не зря же `Lisp` расшифровывается как
+"LISt Processing". Однако не стоит обманываться этим историческим фактом. Lisp по своей
+сути предназначен для обработки списков не более чем рубашка поло для игры в поло.
+Хорошо оптимизированная программа на Common Lisp может не использовать списки.
+
+It would still be a list, though, at least at compile-time. The most sophisticated
+programs, which use lists less at runtime, use them proportionately more at
+
+Это будут списки хотя бы во время компиляции. Самые изощренные программы, которые используют
+списки меньше во время выполнения используют их пропорционально больше 
+
+
+(proclaim '(inline last1 single append1 conc1 mklist))
+
+(defun last1 (lst)
+       (car (last lst)))
+
+(defun single (lst)
+       (and (consp lst) (not (cdr lst))))
+
+(defun append1 (lst obj)
+       (append lst (list obj)))
+
+(defun conc1 (lst obj)
+       (nconc lst (list obj)))
+
+(defun mklist (obj)
+       (if (listp obj) obj (list obj)))
+
+Figure 4.1: Small functions which operate on lists.
+
+
+compile-time, when generating macro expansions. So although the role of lists is
+decreased in modern dialects, operations on lists can still make up the greater part
+of a Lisp program.
+
+во время компиляции, когда происходит разворачивание макросов. Так что несмотря на то, что
+роль списков уменьшается в новейших диалектах, операции над списками может всё еще составлять
+большую часть программы на Lisp
+
+Figures 4.1 and 4.2 contain a selection of functions which build or examine
+lists. Those given in Figure 4.1 are among the smallest utilities worth defining.
+For efficiency, they should all be declared inline (page 26).
+
+Figures 4.1 и 4.2 содержат выборку функций, которые создают или просматривают списки.
+Те, которые в Figure 4.1 самые маленькие из полезных. Для эффективности, они должны все
+быть определены как inline (стр. 26)
+
+The first, last1, returns the last element in a list. The built-in function last
+returns the last cons in a list, not the last element. Most of the time one uses
+it to get the last element, by saying (car (last ...)). Is it worth writing a
+new utility for such a case? Yes, when it effectively replaces one of the built-in
+operators.
+
+Первая функция, last1, возвращает последний элемент в списке. Встроеная функция last
+возвращает последний cons в списке, но не последний элемент. Большую часть времени
+last используется для получения последнего элемента путем (car (last ...)). Если толк
+в написании новой утилиты для такого случая? Да, когда он эффективно заменяет один из
+встроенных операторов.
+
+Notice that last1 does no error-checking. In general, none of the code defined
+in this book will do error-checking. Partly this is just to make the examples clearer.
+But in shorter utilities it is reasonable not to do any error-checking anyway. If we
+try:
+
+Отметьте, что last1 не проводит проверок на ошибки. В общем, в этой книге нет кода, который
+проверяет на ошибки. Частично это потому, что это делает примеры яснее. Но в коротких утилитах
+имеет смысл вообще не делать проверок на ошибки. Если мы запустим:
+
+> (last1 "blub")
+>>Error: "blub" is not a list.
+
+Broken at LAST...
+
+Поломалось в LAST
+
+the error will be caught by last itself. When utilities are small, they form a layer
+of abstraction so thin that it starts to be transparent. As one can see through a thin
+layer of ice, one can see through utilities like last1 to interpret errors which arise
+in the underlying functions.
+
+ошибка будет вызвана в last. Когда утилиты маленькие, слой абстракции настолько тонок,
+что становится прозрачным. Как возможно видеть сквозь тонкий слой льда, так же можно видеть
+сквозь утилиты для интерпретации ошибок, возникающих во внутренних вызовах.
+
+The function single tests whether something is a list of one element. Lisp
+programs need to make this test rather often. At first one might be tempted to use
+the natural translation from English:
+
+Функция single проверяет состоит ли список из одного элемента. Программы на Lisp зачастую
+делают эту проверку часто. Первая попытка может быть попыткой перевести single с английского:
+
+(= (length lst) 1)
+
+Written this way, the test would be very inefficient. We know all we need to know
+as soon as we’ve looked past the first element.
+
+Написанная таким образом, проверка будет очень неэффективной. Мы узнаем всё, что нам
+нужно как только попытаемся заглянуть далее первого элемента.
+
+Next come append1 and conc1. Both attach a new element to the end of a
+list, the latter destructively. These functions are small, but so frequently needed
+that they are worth defining. Indeed, append1 has been predefined in previous
+Lisp dialects.
+
+Следующими идут append1 and conc1. Оба добавляют новый элемент в конец списка, второй
+деструктивен. Эти функции маленькие, но нужны часто и стоят определения FIXME. Кстати,
+append1 была определена в предыдущих диалектах Lisp.
+
+So has mklist, which was predefined in (at least) Interlisp. Its purpose is to
+ensure that something is a list. Many Lisp functions are written to return either a
+single value or a list of values. Suppose that lookup is such a function, and that
+we want to collect the results of calling it on all the elements of a list called data.
+We can do so by writing:
+
+Так же есть mklist, которые уже есть (как минимум ) в Interlisp. Его назначение в том,
+что бы гарантировать, что нечто - список. Многие функции Lisp возвращают и список или
+одно значение. Предположим, что lookup такая функция, и мы хотим собрать результаты её вызова
+для всех элементов списка `data`. Мы можем сделать это написав:
+
+(mapcan #’(lambda (d) (mklist (lookup d)))
+    data)
+    
+Figure 4.2 contains some larger examples of list utilities. The first, longer, is
+useful from the point of view of efficiency as well as abstraction. It compares two
+sequences and returns true only if the first is longer. When comparing the lengths
+of two lists, it is tempting to do just that:
+
+Figure 4.2 содержит другие большие примеры списочных утилит. Первая, longer,
+удобна с точки зрения эффективности как и абстракции. Она сравнивает две последовательности
+и возвращает true если первая длиннее второй. Сравнивая длины двух списков, есть
+соблазнительная идея сделать это в лоб:
+
+(> (length x) (length y))
+
+This idiom is inefficient because it requires the program to traverse the entire
+length of both lists. If one list is much longer than the other, all the effort of
+traversing the difference in their lengths will be wasted. It is faster to do as
+longer does and traverse the two lists in parallel.
+
+Эта идиома неэффективна так как она требует прохождения обоих списков для нахождения длины.
+Если один из списков сильно длиннее другого, проход разницы в длине списков будет зря. Быстрее
+проходить их параллельно.
+
+Embedded within longer is a recursive function to compare the lengths of
+two lists. Since longer is for comparing lengths, it should work for anything
+that you could give as an argument to length. But the possibility of comparing
+lengths in parallel only applies to lists, so the internal function is only called if
+both arguments are lists.
+
+Встроенная в longer рекурсивная функция compare сравнивает длины списков. Так как
+longer предназначен для сравнения длин, он должен работать со всем, что вы можете передать
+в length в качестве аргумента. Но возможность сравнения длин параллельно возможно только
+для списков, следовательно compare вызывается только если оба аргумента списки.
+
+The next function, filter, is to some what remove-if-not is to find-if.
+The built-in remove-if-not returns all the values that might have been returned
+if you called find-if with the same function on successive cdrs of a list. Analogously,
+filter returns what some would have returned for successive cdrs of the
+list:
+
+Следующая функция, filter, как remove-if-not к find-if. Встроенная remove-if-not возвращает
+все значения, которые могут быть возвращены если вы вызовете find-if c той же функцией
+на последующие сdrs списка FIXME. Аналогично, filter возвращает то, что должно быть возвращено
+для последующих crds в списке:
+
+(defun longer (x y)
+  (labels ((compare (x y)
+  	     (and (consp x)
+	     	  (or (null y)
+		      (compare (cdr x) (cdr y))))))
+    (if (and (listp x) (listp y))
+    	(compare x y)
+	(> (length x) (length y)))))
+	
+(defun filter (fn lst)
+  (let ((acc nil))
+    (dolist (x lst)
+      (let ((val (funcall fn x)))
+        (if val (push val acc))))
+    (nreverse acc)))
+    
+(defun group (source n)
+  (if (zerop n) (error "zero length"))
+  (labels ((rec (source acc)
+  	     (let ((rest (nthcdr n source)))
+                (if (consp rest)
+		    (rec rest (cons (subseq source 0 n) acc))
+		    (nreverse (cons source acc))))))
+    (if source (rec source nil) nil)))
+    
+Figure 4.2: Larger functions that operate on lists.
+
+> (filter #'(lambda (x) (if (numberp x) (1+ x)))
+  	  '(a 1 2 b 3 c d 4))
+(2 3 4 5)
+
+You give filter a function and a list, and get back a list of whatever non-nil
+values are returned by the function as it is applied to the elements of the list.
+
+Вы даете filter функцию и список, и получаете список результатов переданной функции,
+которой передали не nil значения списка на входе
+
+Notice that filter uses an accumulator in the same way as the tail-recursive
+functions described in Section 2.8. Indeed, the aim in writing a tail-recursive
+function is to have the compiler generate code in the shape of filter. For
+filter, the straightforward iterative definition is simpler than the tail-recursive
+one. The combination of push and nreverse in the definition of filter is the
+standard Lisp idiom for accumulating a list.
+
+Отметьте, что filter использует аккумулятор тем же способом, как функции с
+хвостовой рекурсией, описанной в разделе 2.8. Цель написания функции
+с хвостовой рекурсией в том, что бы компилятор генерировал код в filter FIXME.
+Для filter, прямолинейная итеративная реализация проще чем версия с хвостовой
+рекурсией. Комбинация push и nreverse в filter является стандартной идиомой
+Lisp для накопления в список
