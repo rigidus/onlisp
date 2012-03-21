@@ -6,9 +6,9 @@ If brevity is the soul of wit, it is also, along with efficiency, the essence of
 software. The cost of writing or maintaining a program increases with its length. 
 All other things being equal, the shorter program is the better.
 
-Если краткость - сестра таланта, это так же, вместе с эффективностью, сущность хорошего
-софта. Цена написания и поддержки программы растет с длиной. При прочих равных условиях
-более короткая программа лучше.
+Если краткость - сестра таланта, тогда эффективность это сущность хорошего
+софта. Цена написания и поддержки программы растет вместе с её размером. При
+прочих равных условиях более короткая программа лучше.
 
 From this point of view, the writing of utilities should be treated as a capital
 expenditure. By replacing find-books with the utility find2, we end up with
