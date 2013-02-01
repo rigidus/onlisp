@@ -146,7 +146,7 @@ appearing as a parameter, or by variable-binding operators like let
 and do. Symbols which are not bound are said to be free. In this
 example, scope comes into play:
 
-Разница между лексическим и динамичским связыванием заключается в том,
+Разница между лексическим и динамическим связыванием заключается в том,
 как реализация поступает со свободными переменными. Символ связывается
 в выражении, если он используется в роли переменной, например как
 аргумент или при помощи операторов связывания таких, как let и
@@ -182,7 +182,7 @@ of y will be the one used in scope-test. If we ﬁnd none, we take the
 global value of y. Thus, in a dynamically scoped Lisp, y would have
 the value it had in the calling expression:
 
-В лиспе с динапической областью видимости для того, чтобы найти
+В лиспе с динамической областью видимости для того, чтобы найти
 значение свободной переменной во время выполнения scope-test мы
 смотрим назад по цепочке вызовов функций, когда мы находим окружение,
 в котором y - связана, мы используем это связывание в scope-test, если
