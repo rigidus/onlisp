@@ -27,7 +27,7 @@ use the most familiar of Lisp idioms:
 (mapcar #’(lambda (x)
             (+ 2 x))
         '(2 5 7 3))
-=> (4795)
+=> (4 7 9 5)
 
 
 What about cases where we want to give a recursive function as the
@@ -96,7 +96,7 @@ let. Каждое описание связывания в выражении д
 Within the labels expression, <name> will refer to a function
 equivalent to:
 
-Внутри labels выражение <name> ссылаться на функцию, еквивалентную
+Внутри labels выражение <name> ссылаться на функцию, эквивалентную
 следующей:
 
 
@@ -159,4 +159,4 @@ number of occurrences of the object in each element:
 соответствующих числу вхождений объекта в каждый элемент:
 
 (count-instances 'a '((a b c) (darpa)(dar) (a a)))
-=> (1212)
+=> (1 2 1 2)
